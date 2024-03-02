@@ -1,5 +1,13 @@
-import { Todo } from "./todo.js";
+import { PubSub } from "pubsub-js";
+import { Todo } from "./Todo.js";
+import { List } from "./List.js";
+import { ListUi } from "./ListUI.js";
+const { format } = require("date-fns");
 
-const todo1 = new Todo("test", Date.now(), Date.now(), false, "test");
+let myItems = ["test1", "test2", "test3", "test4"];
+let list = new List("test");
 
-console.log(todo1);
+myItems.forEach((item) => {
+  let todo = new Todo(item);
+  list.addItem(todo);
+});
