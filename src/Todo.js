@@ -37,10 +37,3 @@ export class Todo {
     this.isComplete = true;
   }
 }
-
-//Since Todos are stored in localStorage in this implementation the prototype holds the class's methods
-// export class TodoProto {
-//   markComplete() {
-//     this.isComplete = true;
-//   }
-// }
