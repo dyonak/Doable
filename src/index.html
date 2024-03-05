@@ -8,113 +8,121 @@
   <body>
     <header><h1>Doable</h1></header>
     <main>
-      <div class="addListForm">
-        <form class="form-horizontal">
-          <fieldset>
-            <!-- Form Name -->
-            <legend>Create List</legend>
-
-            <!-- Text input-->
-            <div class="form-group">
-              <label class="col-md-4 control-label" for="listName"
-                >List Name</label
-              >
-              <div class="col-md-4">
-                <input
-                  id="listName"
-                  name="listName"
-                  type="text"
-                  placeholder="List Name"
-                  class="form-control input-md"
-                  required=""
-                />
-                <span class="help-block"
-                  >Enter a name for your list (e.g. Home Chores)</span
-                >
-              </div>
-            </div>
-
-            <!-- Button (Double) -->
-            <div class="form-group">
-              <label class="col-md-4 control-label" for="addListSubmit"></label>
-              <div class="col-md-8">
-                <button
-                  id="addListSubmit"
-                  name="addListSubmit"
-                  class="btn btn-success"
-                >
-                  Save
-                </button>
-                <button
-                  id="addListCancel"
-                  name="addListCancel"
-                  class="btn btn-danger"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </fieldset>
-        </form>
-      </div>
-      <div class="addItemForm">
-        <form class="form-horizontal">
-          <fieldset>
-            <!-- Form Name -->
-            <legend>Create Todo</legend>
-
-            <!-- Text input-->
-            <div class="form-group">
-              <label class="col-md-4 control-label" for="itemName">Todo</label>
-              <div class="col-md-4">
-                <input
-                  id="itemName"
-                  name="itemName"
-                  type="text"
-                  placeholder="Todo"
-                  class="form-control input-md"
-                  required=""
-                />
-                <span class="help-block"
-                  >What needs to be done? (e.g. Wash the dog)</span
-                >
-              </div>
-            </div>
-
-            <!-- Button (Double) -->
-            <div class="form-group">
-              <label class="col-md-4 control-label" for="addItemSubmit"></label>
-              <div class="col-md-8">
-                <button
-                  id="addItemSubmit"
-                  name="addItemSubmit"
-                  class="btn btn-success"
-                >
-                  Save
-                </button>
-                <button
-                  id="addItemCancel"
-                  name="addItemCancel"
-                  class="btn btn-danger"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </fieldset>
-        </form>
-      </div>
       <div class="sidebar">
         <nav>
           <ul class="listsContainer">
             <li class="addList">+ Create List</li>
           </ul>
+          <div class="addListForm">
+            <form class="form-horizontal">
+              <fieldset>
+                <!-- Form Name -->
+                <legend>Create List</legend>
+
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="listName"
+                    >List Name</label
+                  >
+                  <div class="col-md-4">
+                    <input
+                      id="listName"
+                      name="listName"
+                      type="text"
+                      placeholder="List Name"
+                      class="form-control input-md"
+                      required
+                    />
+                    <span class="help-block"
+                      >Enter a name for your list (e.g. Home Chores)</span
+                    >
+                  </div>
+                </div>
+
+                <!-- Button (Double) -->
+                <div class="form-group">
+                  <label
+                    class="col-md-4 control-label"
+                    for="addListSubmit"
+                  ></label>
+                  <div class="col-md-8">
+                    <button
+                      id="addListSubmit"
+                      name="addListSubmit"
+                      class="btn btn-success"
+                    >
+                      Save
+                    </button>
+                    <button
+                      id="addListCancel"
+                      name="addListCancel"
+                      class="btn btn-danger"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+          </div>
         </nav>
       </div>
       <div class="primaryContent">
         <ul class="itemsContainer">
           <li class="addItem">+ Create Todo</li>
         </ul>
+        <div class="addItemForm">
+          <form class="form-horizontal">
+            <fieldset>
+              <!-- Form Name -->
+              <legend>Create Todo</legend>
+
+              <!-- Text input-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="itemName"
+                  >Todo</label
+                >
+                <div class="col-md-4">
+                  <input
+                    id="itemName"
+                    name="itemName"
+                    type="text"
+                    placeholder="Todo"
+                    class="form-control input-md"
+                    required=""
+                  />
+                  <span class="help-block"
+                    >What needs to be done? (e.g. Wash the dog)</span
+                  >
+                </div>
+              </div>
+
+              <!-- Button (Double) -->
+              <div class="form-group">
+                <label
+                  class="col-md-4 control-label"
+                  for="addItemSubmit"
+                ></label>
+                <div class="col-md-8">
+                  <button
+                    id="addItemSubmit"
+                    name="addItemSubmit"
+                    class="btn btn-success"
+                  >
+                    Save
+                  </button>
+                  <button
+                    id="addItemCancel"
+                    name="addItemCancel"
+                    class="btn btn-danger"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </fieldset>
+          </form>
+        </div>
       </div>
     </main>
     <footer>FOOTER</footer>

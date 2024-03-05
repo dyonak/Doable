@@ -129,10 +129,10 @@ table {
 }
 
 :root {
-  --light-mode-background: #bbb;
+  --light-mode-background: #eee;
   --dark-mode-background: #222;
   --light-mode-font: #222;
-  --dark-mode-font: #bbb;
+  --dark-mode-font: #eee;
   --first-color: #1982c4;
   --second-color: #8ac926;
   --third-color: #ffca3a;
@@ -140,31 +140,17 @@ table {
   --fifth-color: #6a4c93;
 }
 
-:root {
-  color-scheme: light dark;
-}
-
 @media (prefers-color-scheme: light) {
-  .element {
-    --background: #222;
-    --font: #bbb;
-    --first-color: #1982c4;
-    --second-color: #8ac926;
-    --third-color: #ffca3a;
-    --fourth-color: #ff595e;
-    --fifth-color: #6a4c93;
+  body {
+    background-color: var(--light-mode-background);
+    color: var(--light-mode-font);
   }
 }
 
 @media (prefers-color-scheme: dark) {
-  .element {
-    --background: #222;
-    --font: #bbb;
-    --first-color: #1982c4;
-    --second-color: #8ac926;
-    --third-color: #ffca3a;
-    --fourth-color: #ff595e;
-    --fifth-color: #6a4c93;
+  body {
+    background-color: var(--dark-mode-background);
+    color: var(--dark-mode-font);
   }
 }
 
@@ -198,10 +184,9 @@ main {
 .addListForm,
 .addItemForm {
   visibility: hidden;
-  border: 1px red solid;
-  position: absolute;
-  left: calc(100% / 2);
-  top: calc(100dvh / 2);
+  position: relative;
+  left: 20px;
+  top: 10px;
   width: 200px;
   height: 200px;
 }
@@ -220,7 +205,8 @@ main {
   padding: 5px 0px 5px 20px;
 }
 
-.itemsContainer li:hover {
+.itemsContainer [class*="item"]:hover {
+  background-color: #6a4c93;
 }
 
 .listsContainer {
@@ -231,4 +217,8 @@ main {
 
 .listsContainer li {
   padding: 5px 0px 5px 20px;
+}
+
+.listsContainer .list:hover {
+  background-color: var(--second-color);
 }

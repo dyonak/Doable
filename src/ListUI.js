@@ -41,29 +41,36 @@ export class ListUi {
 
   addList(e) {
     e.preventDefault();
-    this.addListForm.style.visibility = "hidden";
+    if (document.querySelector("#listName").value === "") return;
     PubSub.publish("user_created_list", {
       name: document.querySelector("#listName").value,
     });
+    document.querySelector("#listName").value = "";
+    this.addListForm.style.visibility = "hidden";
   }
 
   addItem(e) {
     e.preventDefault();
+    if (document.querySelector("#itemName").value === "") return;
     PubSub.publish("user_created_item", {
       name: document.querySelector("#itemName").value,
     });
+    document.querySelector("#itemName").value = "";
+    this.addItemForm.style.visibility = "hidden";
   }
 
   toggleAddForm(e) {
     if (e.target === this.addListDiv) {
       this.addListForm.style.visibility === "visible"
         ? (this.addListForm.style.visibility = "hidden")
-        : (this.addListForm.style.visibility = "visible");
+        : (this.addListForm.style.visibility = "visible") &&
+          this.addListForm.querySelector("input").focus();
     }
     if (e.target === this.addItemDiv) {
       this.addItemForm.style.visibility === "visible"
         ? (this.addItemForm.style.visibility = "hidden")
-        : (this.addItemForm.style.visibility = "visible");
+        : (this.addItemForm.style.visibility = "visible") &&
+          this.addItemForm.querySelector("input").focus();
     }
   }
 
