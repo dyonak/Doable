@@ -12,17 +12,12 @@ export class List {
     List.#incrementID();
     this.id = List.#id;
     this.isActive = false;
+    this.activateList();
 
-    PubSub.subscribe(
-      "archive_complete_list_" + this.name,
-      this.archiveComplete()
-    );
-    PubSub.publish("list_created", {
-      name: this.name,
-      id: this.id,
-      active: this.isActive,
-      createdDate: this.createdDate,
-      items: this.items,
+    PubSub.subscribe("list_activated", (msg, data) => {
+      if (this.id !== data.id) {
+        this.isActive = false;
+      }
     });
   }
   activateList() {
@@ -43,11 +38,6 @@ export class List {
     });
   }
   archiveComplete() {
-    this.items.forEach((item) => {
-      if (item.isComplete) {
-        this.items.splice(this.items.indexOf(item), 1);
-      }
-      console.log(this.items);
-    });
+    this.items = this.items.filter((item) => item.isComplete === false);
   }
 }

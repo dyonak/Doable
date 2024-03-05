@@ -172,6 +172,15 @@ body {
   display: grid;
   grid-template-rows: 100px calc(100dvh - 200px) 100px;
   grid-template-columns: 1fr;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+li {
+  cursor: pointer;
+}
+
+.active {
+  border-right: 10px var(--second-color) solid;
 }
 
 header > h1 {
@@ -186,6 +195,17 @@ main {
   color: var(--font);
 }
 
+.addListForm,
+.addItemForm {
+  visibility: hidden;
+  border: 1px red solid;
+  position: absolute;
+  left: calc(100% / 2);
+  top: calc(100dvh / 2);
+  width: 200px;
+  height: 200px;
+}
+
 .sidebar {
   background-color: var(--first-color);
 }
@@ -193,9 +213,22 @@ main {
 .itemsContainer {
   display: flex;
   flex-direction: column;
+  font-size: x-large;
+}
+
+.itemsContainer li {
+  padding: 5px 0px 5px 20px;
+}
+
+.itemsContainer li:hover {
 }
 
 .listsContainer {
   display: flex;
   flex-direction: column;
+  font-size: x-large;
+}
+
+.listsContainer li {
+  padding: 5px 0px 5px 20px;
 }
