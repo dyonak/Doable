@@ -181,6 +181,22 @@ main {
   color: var(--font);
 }
 
+.addListLi,
+.addItemLi {
+  display: none;
+}
+
+.addListInput,
+.addItemInput {
+  height: 22px;
+  width: 250px;
+  font-size: x-large;
+}
+
+.addItemInput {
+  width: 500px;
+}
+
 .addListForm,
 .addItemForm {
   visibility: hidden;
@@ -217,6 +233,16 @@ main {
 
 .listsContainer li {
   padding: 5px 0px 5px 20px;
+}
+
+li i {
+  float: right;
+  color: var(--third-color);
+  margin-right: 10px;
+}
+
+.fa-trash {
+  color: var(--fourth-color);
 }
 
 .listsContainer .list:hover {

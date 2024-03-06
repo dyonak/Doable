@@ -4,27 +4,19 @@ export class ListUi {
     this.listsBase = document.querySelector(".listsContainer");
     this.addItemDiv = document.querySelector(".addItem");
     this.addListDiv = document.querySelector(".addList");
-    this.addListForm = document.querySelector(".addListForm");
-    this.addItemForm = document.querySelector(".addItemForm");
-    this.addListSubmit = document.querySelector("#addListSubmit");
-    this.addListCancel = document.querySelector("#addListCancel");
-    this.addItemSubmit = document.querySelector("#addItemSubmit");
-    this.addItemCancel = document.querySelector("#addItemCancel");
 
-    this.addListDiv.addEventListener("click", (e) => this.toggleAddForm(e));
-    this.addItemDiv.addEventListener("click", (e) => this.toggleAddForm(e));
+    this.addListLi = document.querySelector(".addListLi");
+    this.addListInput = document.querySelector(".addListInput");
+    this.addItemLi = document.querySelector(".addItemLi");
+    this.addItemInput = document.querySelector(".addItemInput");
 
-    this.addListSubmit.addEventListener("click", (e) => this.addList(e));
-    this.addItemSubmit.addEventListener("click", (e) => this.addItem(e));
+    this.addListDiv.addEventListener("click", (e) => this.toggleListInput(e));
+    this.addItemDiv.addEventListener("click", (e) => this.toggleItemInput(e));
 
-    this.addListCancel.addEventListener("click", (e) => {
-      e.preventDefault();
-      this.addListForm.style.visibility = "hidden";
-    });
-    this.addItemCancel.addEventListener("click", (e) => {
-      e.preventDefault();
-      this.addItemForm.style.visibility = "hidden";
-    });
+    this.addListInput.addEventListener("keypress", (e) => this.addList(e));
+    this.addItemInput.addEventListener("keypress", (e) => this.addItem(e));
+
+    document.addEventListener("keyup", (e) => this.handleShortcuts(e));
 
     PubSub.subscribe("item_added", (msg, data) => {
       this.displayItem(data.title, data.id);
@@ -39,47 +31,84 @@ export class ListUi {
     });
   }
 
+  handleShortcuts(e) {
+    if (
+      this.addItemLi.style.display === "block" ||
+      this.addListLi.style.display === "block"
+    )
+      return;
+    console.log(e.keyCode);
+    //Check for l
+    if (e.keyCode === 76) {
+      this.toggleListInput(e);
+    }
+    //Check for t
+    if (e.keyCode === 84) {
+      this.toggleItemInput(e);
+    }
+    //Check for esc
+    //Close/clear all current interactions
+    if (e.key === "Escape") {
+      this.addItemLi.style.display = "none";
+      this.addListLi.style.display = "none";
+    }
+  }
+  toggleItemInput(e) {
+    this.addItemLi.style.display =
+      this.addItemLi.style.display === "none" ? "block" : "none";
+    this.addItemInput.focus();
+  }
+
+  toggleListInput(e) {
+    this.addListLi.style.display =
+      this.addListLi.style.display === "none" ? "block" : "none";
+    this.addListInput.focus();
+    this.addItemInput.value = "";
+  }
+
   addList(e) {
-    e.preventDefault();
-    if (document.querySelector("#listName").value === "") return;
+    if (e.key !== "Enter") return;
+    if (this.addListInput.value === "") return;
     PubSub.publish("user_created_list", {
-      name: document.querySelector("#listName").value,
+      name: this.addListInput.value,
     });
-    document.querySelector("#listName").value = "";
-    this.addListForm.style.visibility = "hidden";
+    this.addListInput.value = "";
+    this.addListLi.style.display = "none";
   }
 
   addItem(e) {
-    e.preventDefault();
-    if (document.querySelector("#itemName").value === "") return;
+    if (e.key !== "Enter") return;
+    if (this.addItemInput.value === "") return;
     PubSub.publish("user_created_item", {
-      name: document.querySelector("#itemName").value,
+      name: this.addItemInput.value,
     });
-    document.querySelector("#itemName").value = "";
-    this.addItemForm.style.visibility = "hidden";
+    this.addItemInput.value = "";
+    this.addItemLi.style.display = "none";
   }
 
-  toggleAddForm(e) {
-    if (e.target === this.addListDiv) {
-      this.addListForm.style.visibility === "visible"
-        ? (this.addListForm.style.visibility = "hidden")
-        : (this.addListForm.style.visibility = "visible") &&
-          this.addListForm.querySelector("input").focus();
-    }
-    if (e.target === this.addItemDiv) {
-      this.addItemForm.style.visibility === "visible"
-        ? (this.addItemForm.style.visibility = "hidden")
-        : (this.addItemForm.style.visibility = "visible") &&
-          this.addItemForm.querySelector("input").focus();
-    }
-  }
+  //   toggleAddForm(e) {
+  //     if (e.target === this.addListDiv) {
+  //       this.addListForm.style.visibility === "visible"
+  //         ? (this.addListForm.style.visibility = "hidden")
+  //         : (this.addListForm.style.visibility = "visible") &&
+  //           this.addListForm.querySelector("input").focus();
+  //     }
+  //     if (e.target === this.addItemDiv) {
+  //       this.addItemForm.style.visibility === "visible"
+  //         ? (this.addItemForm.style.visibility = "hidden")
+  //         : (this.addItemForm.style.visibility = "visible") &&
+  //           this.addItemForm.querySelector("input").focus();
+  //     }
+  //   }
 
   clearLists() {
     this.listsBase.replaceChildren(this.addListDiv);
+    this.listsBase.insertBefore(this.addListLi, this.addListDiv);
   }
 
   clearItemList() {
     this.itemsBase.replaceChildren(this.addItemDiv);
+    this.itemsBase.insertBefore(this.addItemLi, this.addItemDiv);
   }
 
   markListActive(id) {
@@ -101,9 +130,33 @@ export class ListUi {
     if (isActive) li.classList.add("active");
     li.textContent = title;
     li.addEventListener("click", (e) => {
-      PubSub.publish("list_clicked", { id });
+      PubSub.publish("user_loaded_list", { id });
     });
+    //quick actions to be applied, the list, are fancy awesome font icons (eg - 'trash' here will add an i element with the fa-trash icon)
+    this.appendQuickActions(li, ["trash", "pen"]);
     this.listsBase.insertBefore(li, this.listsBase.children[0]);
+  }
+
+  appendQuickActions(element, actionsList) {
+    actionsList.forEach((action) => {
+      let actionElement = document.createElement("i");
+      actionElement.classList.add("fa-solid");
+      actionElement.classList.add("fa-" + action);
+      actionElement.addEventListener("click", (e) =>
+        this.processQuickAction(action, element)
+      );
+      element.appendChild(actionElement);
+    });
+  }
+
+  processQuickAction(action, element) {
+    console.log(`Action of ${action} on element ${element} detected.`);
+    if (action === "trash") {
+      console.log(element.classList[1]);
+      PubSub.publish("user_deleted_" + element.classList[0], {
+        id: element.classList[1],
+      });
+    }
   }
 
   displayActiveList(id, items) {
@@ -126,8 +179,11 @@ export class ListUi {
 
   displayItem(title, id) {
     let li = document.createElement("li");
+    li.classList.add("item");
     li.classList.add("item-" + id);
     li.textContent = title;
+    //quick actions to be applied are fancy awesome font icons (eg - 'trash' here will add an i element with the fa-trash icon)
+    this.appendQuickActions(li, ["trash", "pen"]);
     this.itemsBase.insertBefore(li, this.itemsBase.children[0]);
   }
 }

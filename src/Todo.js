@@ -20,8 +20,8 @@ export class Todo {
     this.isComplete = isComplete;
     this.priority - priority;
     this.description = description;
-    Todo.#incrementID();
     this.id = Todo.#id;
+    Todo.#incrementID();
     this.listID = 0;
 
     PubSub.subscribe("user_marked_complete", () => {

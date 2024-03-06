@@ -10,7 +10,6 @@ export class ListApp {
 
     PubSub.subscribe("list_activated", (msg, data) => {
       this.activeList = data.id;
-      console.log("active list is " + this.activeList);
     });
 
     PubSub.subscribe("user_created_list", (msg, data) => {
@@ -22,6 +21,27 @@ export class ListApp {
       });
     });
 
+    PubSub.subscribe("user_deleted_list", (msg, data) => {
+      this.lists = this.lists.filter((list) => {
+        return list.id != data.id.slice(-1);
+      });
+      PubSub.publish("lists_updated", { lists: this.lists });
+    });
+
+    PubSub.subscribe("user_deleted_item", (msg, data) => {
+      this.lists[this.activeList].items = this.lists[
+        this.activeList
+      ].items.filter((item) => {
+        return item.id != data.id.slice(-1);
+      });
+
+      PubSub.publish("lists_updated", { lists: this.lists });
+      PubSub.publish("list_activated", {
+        id: this.activeList,
+        items: this.lists[this.activeList].items,
+      });
+    });
+
     PubSub.subscribe("user_created_item", (msg, data) => {
       this.lists
         .find((element) => element.id === this.activeList)
@@ -30,9 +50,7 @@ export class ListApp {
       console.log(this.lists.find((element) => element.id === this.activeList));
     });
 
-    PubSub.subscribe("list_clicked", (msg, data) => {
-      console.table(this.lists);
-      console.log(data.id);
+    PubSub.subscribe("user_loaded_list", (msg, data) => {
       this.lists.forEach((list) => {
         if (list.id === data.id) {
           list.activateList();

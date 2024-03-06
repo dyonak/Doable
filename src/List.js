@@ -9,8 +9,8 @@ export class List {
     this.createdDate = createdDate;
     this.tags = tags;
     this.items = [];
-    List.#incrementID();
     this.id = List.#id;
+    List.#incrementID();
     this.isActive = false;
     this.activateList();
 
