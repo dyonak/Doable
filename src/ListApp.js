@@ -74,6 +74,23 @@ export class ListApp {
       PubSub.publish("lists_updated", { lists: this.lists });
     });
 
+    PubSub.subscribe("user_completed_item", (msg, data) => {
+      let itemIdToComplete = this.getIdFromClass(data.id);
+      this.lists
+        .find((element) => element.id === this.activeList)
+        .items.find((item) => item.id == itemIdToComplete).isComplete = true;
+      PubSub.publish("lists_updated", { lists: this.lists });
+    });
+
+    PubSub.subscribe("user_uncompleted_item", (msg, data) => {
+      let itemIdToComplete = this.getIdFromClass(data.id);
+      this.lists
+        .find((element) => element.id === this.activeList)
+        .items.find((item) => item.id == itemIdToComplete).isComplete = false;
+      this.lists.push(this.lists.splice(this.lists.indexOf()));
+      PubSub.publish("lists_updated", { lists: this.lists });
+    });
+
     PubSub.subscribe("user_loaded_list", (msg, data) => {
       this.lists.forEach((list) => {
         if (list.id === data.id) {

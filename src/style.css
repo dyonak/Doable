@@ -241,6 +241,15 @@ li i {
   color: var(--fourth-color);
 }
 
+.fa-square,
+.fa-square-check {
+  color: var(--second-color);
+}
+
+.fa-clock {
+  color: var(--font);
+}
+
 .listsContainer .list:hover {
   background-color: var(--second-color);
 }
@@ -251,4 +260,8 @@ li i {
 
 .listsContainer .active {
   border-right: 10px var(--second-color) solid;
+}
+
+.strikethrough {
+  text-decoration: line-through wavy 2px var(--third-color);
 }

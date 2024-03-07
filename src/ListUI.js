@@ -1,3 +1,10 @@
+import {
+  formatDistance,
+  format,
+  formatDistanceToNow,
+  formatDistanceToNowStrict,
+} from "date-fns";
+
 export class ListUi {
   constructor() {
     this.itemsBase = document.querySelector(".itemsContainer");
@@ -145,6 +152,16 @@ export class ListUi {
         id: element.classList[1],
       });
     }
+    if (action === "square") {
+      PubSub.publish("user_completed_" + element.classList[0], {
+        id: element.classList[1],
+      });
+    }
+    if (action === "square-check") {
+      PubSub.publish("user_uncompleted_" + element.classList[0], {
+        id: element.classList[1],
+      });
+    }
   }
 
   displayActiveList(id, items) {
@@ -152,7 +169,13 @@ export class ListUi {
     this.clearItemList();
     if (items.length > 0) {
       items.forEach((item) => {
-        this.displayItem(item.title, item.id);
+        this.displayItem(
+          item.title,
+          item.id,
+          item.priority,
+          item.isComplete,
+          item.dueDate
+        );
       });
     }
     //Set active class for this list's ID
@@ -165,13 +188,21 @@ export class ListUi {
     });
   }
 
-  displayItem(title, id) {
+  displayItem(title, id, prio, isComplete, dueDate) {
     let li = document.createElement("li");
     li.classList.add("item");
     li.classList.add("item-" + id);
     li.textContent = title;
     //quick actions to be applied are fancy awesome font icons (eg - 'trash' here will add an i element with the fa-trash icon)
-    this.appendQuickActions(li, ["trash", "pen"]);
+    let completeIcon = isComplete ? "square-check" : "square";
+
+    this.appendQuickActions(li, [completeIcon, "trash", "pen", "clock"]);
+
+    //Style based on item parameters
+    li.style.opacity = isComplete && "60%";
+    if (isComplete) {
+      li.classList.add("strikethrough");
+    }
     this.itemsBase.insertBefore(li, this.itemsBase.children[0]);
   }
 }
