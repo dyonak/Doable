@@ -14,11 +14,13 @@ export class List {
     this.isActive = false;
     this.activateList();
 
-    PubSub.subscribe("list_activated", (msg, data) => {
-      if (this.id !== data.id) {
-        this.isActive = false;
-      }
-    });
+    // PubSub.subscribe("list_activated", (msg, data) => {
+    //   if (this.id !== data.id) {
+    //     this.isActive = false;
+    //   } else {
+    //     this.isActive = true;
+    //   }
+    // });
   }
   activateList() {
     this.isActive = true;
@@ -30,6 +32,7 @@ export class List {
       items: this.items,
     });
   }
+
   addItem(item) {
     this.items.push(item);
     PubSub.publish("item_added_to_list", {
@@ -37,6 +40,13 @@ export class List {
       listID: this.id,
     });
   }
+
+  removeItem(itemId) {
+    this.items = this.items.filter((item) => {
+      return item.id != itemId;
+    });
+  }
+
   archiveComplete() {
     this.items = this.items.filter((item) => item.isComplete === false);
   }

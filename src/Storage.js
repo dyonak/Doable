@@ -1,23 +1,20 @@
-new (class StorageManager {
+new (class Storage {
   constructor() {
     //This is just here for testing
+    this.listCount = 0;
+    this.itemCount = 0;
+    PubSub.subscribe("lists_updated", (msg, data) => {
+      this.storeLists(data.lists);
+    });
+    this.retrieveLists();
   }
 
-  storeObj(obj) {
-    localStorage.setItem(this.getNextID(), JSON.stringify(obj));
-    return this.getNextID() - 1;
+  storeLists(lists) {
+    localStorage.setItem("lists", JSON.stringify(lists));
   }
 
-  getNextID() {
-    return localStorage.length;
-  }
-
-  retrieveObj(id) {
+  retrieveLists() {
     //Object.assign(JSON.parse(localStorage.getItem(id)), new Todo());
     //prototype must be set to re-attach the class methods, localstorage strips them
-    return Object.setPrototypeOf(
-      JSON.parse(localStorage.getItem(id)),
-      Todo.prototype
-    );
   }
 })();

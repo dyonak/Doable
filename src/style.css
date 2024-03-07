@@ -165,10 +165,6 @@ li {
   cursor: pointer;
 }
 
-.active {
-  border-right: 10px var(--second-color) solid;
-}
-
 header > h1 {
   font-size: xx-large;
   color: var(--first-color);
@@ -222,7 +218,7 @@ main {
 }
 
 .itemsContainer [class*="item"]:hover {
-  background-color: #6a4c93;
+  background-color: var(--fifth-color);
 }
 
 .listsContainer {
@@ -238,7 +234,7 @@ main {
 li i {
   float: right;
   color: var(--third-color);
-  margin-right: 10px;
+  padding-right: 20px;
 }
 
 .fa-trash {
@@ -247,4 +243,12 @@ li i {
 
 .listsContainer .list:hover {
   background-color: var(--second-color);
+}
+
+.listsContainer li {
+  border-right: 10px var(--first-color) solid;
+}
+
+.listsContainer .active {
+  border-right: 10px var(--second-color) solid;
 }

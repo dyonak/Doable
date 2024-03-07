@@ -29,6 +29,10 @@ export class ListUi {
     PubSub.subscribe("list_activated", (msg, data) => {
       this.displayActiveList(data.id, data.items);
     });
+    PubSub.subscribe("all_lists_removed", (msg) => {
+      this.clearLists();
+      this.clearItemList();
+    });
   }
 
   handleShortcuts(e) {
@@ -37,7 +41,6 @@ export class ListUi {
       this.addListLi.style.display === "block"
     )
       return;
-    console.log(e.keyCode);
     //Check for l
     if (e.keyCode === 76) {
       this.toggleListInput(e);
@@ -86,21 +89,6 @@ export class ListUi {
     this.addItemLi.style.display = "none";
   }
 
-  //   toggleAddForm(e) {
-  //     if (e.target === this.addListDiv) {
-  //       this.addListForm.style.visibility === "visible"
-  //         ? (this.addListForm.style.visibility = "hidden")
-  //         : (this.addListForm.style.visibility = "visible") &&
-  //           this.addListForm.querySelector("input").focus();
-  //     }
-  //     if (e.target === this.addItemDiv) {
-  //       this.addItemForm.style.visibility === "visible"
-  //         ? (this.addItemForm.style.visibility = "hidden")
-  //         : (this.addItemForm.style.visibility = "visible") &&
-  //           this.addItemForm.querySelector("input").focus();
-  //     }
-  //   }
-
   clearLists() {
     this.listsBase.replaceChildren(this.addListDiv);
     this.listsBase.insertBefore(this.addListLi, this.addListDiv);
@@ -119,8 +107,10 @@ export class ListUi {
     this.clearLists();
     lists.forEach((list) => {
       this.displayList(list.name, list.id, list.isActive);
+      if (list.isActive) {
+        this.displayActiveList(list.id, list.items);
+      }
     });
-    console.log();
   }
 
   displayList(title, id, isActive) {
@@ -150,9 +140,7 @@ export class ListUi {
   }
 
   processQuickAction(action, element) {
-    console.log(`Action of ${action} on element ${element} detected.`);
     if (action === "trash") {
-      console.log(element.classList[1]);
       PubSub.publish("user_deleted_" + element.classList[0], {
         id: element.classList[1],
       });

@@ -12,17 +12,18 @@ export class Todo {
     dueDate = Date.now() + 24 * 60 * 60 * 1000,
     isComplete = false,
     priority = 2,
-    description = ""
+    description = "",
+    listId = null
   ) {
     this.title = title;
     this.createDate = createDate;
     this.dueDate = dueDate;
     this.isComplete = isComplete;
-    this.priority - priority;
+    this.priority = priority;
     this.description = description;
     this.id = Todo.#id;
     Todo.#incrementID();
-    this.listID = 0;
+    this.listID = listId;
 
     PubSub.subscribe("user_marked_complete", () => {
       this.markComplete();
