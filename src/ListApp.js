@@ -87,7 +87,6 @@ export class ListApp {
       this.lists
         .find((element) => element.id === this.activeList)
         .items.find((item) => item.id == itemIdToComplete).isComplete = false;
-      this.lists.push(this.lists.splice(this.lists.indexOf()));
       PubSub.publish("lists_updated", { lists: this.lists });
     });
 
