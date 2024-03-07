@@ -16,6 +16,9 @@ export class ListApp {
         }
       });
       this.lists.find((list) => list.id === data.id).isActive = true;
+      PubSub.publish("lists_updated", {
+        lists: this.lists,
+      });
     });
 
     PubSub.subscribe("user_created_list", (msg, data) => {
@@ -101,7 +104,7 @@ export class ListApp {
         newList.createdDate = list.createDate;
         newList.tags = list.tags;
         newList.isActive = list.isActive;
-
+        if (newList.isActive) this.activeList = newList.id;
         list.items.forEach((item) => {
           let newItem = new Todo(item.title);
           newItem.createdDate = item.createdDate;
