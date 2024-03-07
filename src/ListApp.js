@@ -81,22 +81,50 @@ export class ListApp {
     });
 
     // DUMMY DATA GEN START
-    let items = ["test1", "test2", "test3", "test4"];
-    let lists = ["Home", "Work", "School", "Personal"];
+    // let items = ["test1", "test2", "test3", "test4"];
+    // let lists = ["Home", "Work", "School", "Personal"];
 
-    lists.forEach((list) => {
-      let newlist = this.addList(list);
-      items.forEach((item) => {
-        newlist.addItem(new Todo(list + " " + item));
-        console.log(`Adding item ${item} to list ${list}`);
+    // lists.forEach((list) => {
+    //   let newlist = this.addList(list);
+    //   items.forEach((item) => {
+    //     newlist.addItem(new Todo(list + " " + item));
+    //     console.log(`Adding item ${item} to list ${list}`);
+    //   });
+    // });
+    // //DUMMY DATA GEN END
+    PubSub.subscribe("lists_retrieved_from_storage", (msg, data) => {
+      let retrievedLists = data.lists;
+
+      retrievedLists.forEach((list) => {
+        console.log(list.createdDate);
+        let newList = new List(list.name);
+        newList.createdDate = list.createDate;
+        newList.tags = list.tags;
+        newList.isActive = list.isActive;
+
+        list.items.forEach((item) => {
+          let newItem = new Todo(item.title);
+          newItem.createdDate = item.createdDate;
+          newItem.dueDate = item.dueDate;
+          newItem.isComplete = item.isComplete;
+          newItem.priority = item.priority;
+          newItem.description = item.description;
+          newList.addItem(newItem);
+        });
+        this.lists.push(newList);
       });
+      PubSub.publish("lists_updated", { lists: this.lists });
+      this.lists.find((list) => list.id == this.activeList).activateList();
     });
-    //DUMMY DATA GEN END
-
     PubSub.publish("app_started");
   }
-  addList(list) {
-    let newList = new List(list);
+  addList(list, createdDate = new Date(), tags = [], items = []) {
+    let newList = new List(
+      (name = list),
+      (createdDate = createdDate),
+      (tags = tags),
+      (items = items)
+    );
     this.lists.push(newList);
     PubSub.publish("lists_updated", {
       lists: this.lists,

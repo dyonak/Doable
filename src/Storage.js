@@ -6,7 +6,9 @@ new (class Storage {
     PubSub.subscribe("lists_updated", (msg, data) => {
       this.storeLists(data.lists);
     });
-    this.retrieveLists();
+    PubSub.subscribe("app_started", (msg) => {
+      this.retrieveLists();
+    });
   }
 
   storeLists(lists) {
@@ -14,6 +16,9 @@ new (class Storage {
   }
 
   retrieveLists() {
+    let lists = JSON.parse(localStorage.getItem("lists"));
+    //localStorage.clear();
+    PubSub.publish("lists_retrieved_from_storage", { lists: lists });
     //Object.assign(JSON.parse(localStorage.getItem(id)), new Todo());
     //prototype must be set to re-attach the class methods, localstorage strips them
   }

@@ -4,7 +4,7 @@ export class List {
   static #incrementID() {
     this.#id++;
   }
-  constructor(name, createdDate = Date.now(), tags = []) {
+  constructor(name, createdDate = Date.now(), tags = [], items = []) {
     this.name = name;
     this.createdDate = createdDate;
     this.tags = tags;
