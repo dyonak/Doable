@@ -3,6 +3,7 @@ import {
   format,
   formatDistanceToNow,
   formatDistanceToNowStrict,
+  formatRelative,
 } from "date-fns";
 
 export class ListUi {
@@ -137,7 +138,8 @@ export class ListUi {
   appendQuickActions(element, actionsList) {
     actionsList.forEach((action) => {
       let actionElement = document.createElement("i");
-      actionElement.classList.add("fa-solid");
+      let faStyle = "clocksquare".includes(action) ? "fa-regular" : "fa-solid";
+      actionElement.classList.add(faStyle);
       actionElement.classList.add("fa-" + action);
       actionElement.addEventListener("click", (e) =>
         this.processQuickAction(action, element)
@@ -176,6 +178,7 @@ export class ListUi {
           item.isComplete,
           item.dueDate
         );
+        console.log("Displaying " + item.title);
       });
     }
     //Set active class for this list's ID
@@ -193,10 +196,15 @@ export class ListUi {
     li.classList.add("item");
     li.classList.add("item-" + id);
     li.textContent = title;
-    //quick actions to be applied are fancy awesome font icons (eg - 'trash' here will add an i element with the fa-trash icon)
+    //quick actions to be applied are font awesome icons (eg - 'trash' here will add an i element with the fa-trash icon)
     let completeIcon = isComplete ? "square-check" : "square";
 
     this.appendQuickActions(li, [completeIcon, "trash", "pen", "clock"]);
+
+    let dueDistance = formatDistance(dueDate, Date.now(), { addSuffix: true });
+    let dueDistanceDiv = document.createElement("span");
+    dueDistanceDiv.textContent = dueDistance;
+    dueDistanceDiv.classList.add("dueDistance");
 
     //Style based on item parameters
     li.style.opacity = isComplete && "60%";

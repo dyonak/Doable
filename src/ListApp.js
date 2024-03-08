@@ -109,7 +109,7 @@ export class ListApp {
 
   loadListsFromStorage(data) {
     let retrievedLists = data.lists;
-
+    if (retrievedLists.length < 1) return;
     retrievedLists.forEach((list) => {
       let newList = new List(list.name);
       newList.createdDate = list.createDate;

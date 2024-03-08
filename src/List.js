@@ -35,10 +35,6 @@ export class List {
 
   addItem(item) {
     this.items.push(item);
-    PubSub.publish("item_added_to_list", {
-      itemID: item.id,
-      listID: this.id,
-    });
   }
 
   removeItem(itemId) {
