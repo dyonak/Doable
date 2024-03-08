@@ -138,13 +138,15 @@ export class ListUi {
   appendQuickActions(element, actionsList) {
     actionsList.forEach((action) => {
       let actionElement = document.createElement("i");
+
+      //TODO: Fix this hacky long string approach to change the solid/regular class
       let faStyle = "clocksquare".includes(action) ? "fa-regular" : "fa-solid";
       actionElement.classList.add(faStyle);
       actionElement.classList.add("fa-" + action);
       actionElement.addEventListener("click", (e) =>
         this.processQuickAction(action, element)
       );
-      element.appendChild(actionElement);
+      element.insertAdjacentElement("afterbegin", actionElement);
     });
   }
 
@@ -196,21 +198,43 @@ export class ListUi {
     li.classList.add("item");
     li.classList.add("item-" + id);
     li.textContent = title;
+
     //quick actions to be applied are font awesome icons (eg - 'trash' here will add an i element with the fa-trash icon)
     let completeIcon = isComplete ? "square-check" : "square";
 
-    this.appendQuickActions(li, [completeIcon, "trash", "pen", "clock"]);
-
-    let dueDistance = formatDistance(dueDate, Date.now(), { addSuffix: true });
-    let dueDistanceDiv = document.createElement("span");
-    dueDistanceDiv.textContent = dueDistance;
-    dueDistanceDiv.classList.add("dueDistance");
+    this.appendQuickActions(li, ["trash", "pen", completeIcon]);
 
     //Style based on item parameters
     li.style.opacity = isComplete && "60%";
     if (isComplete) {
       li.classList.add("strikethrough");
     }
+
+    this.displayItemsDueDateInfo(li, dueDate);
     this.itemsBase.insertBefore(li, this.itemsBase.children[0]);
+  }
+
+  displayItemsDueDateInfo(li, dueDate) {
+    //Add due date info
+    let dueDistance = formatDistance(dueDate, Date.now(), { addSuffix: true });
+    let dueDistanceDiv = document.createElement("span");
+
+    //Add text
+    dueDistanceDiv.textContent = dueDistance;
+    dueDistanceDiv.classList.add("dueDistance");
+
+    if (dueDate - Date.now() < 0) {
+      dueDistanceDiv.classList.add("overdue");
+    }
+
+    if (dueDate - Date.now() < 24 * 60 * 60 * 1000) {
+      dueDistanceDiv.classList.add("dueToday");
+    }
+
+    //Add icon
+    let clockIcon = document.createElement("i");
+    clockIcon.classList.add("fa-regular", "fa-clock");
+    dueDistanceDiv.insertAdjacentElement("beforeend", clockIcon);
+    li.appendChild(dueDistanceDiv);
   }
 }

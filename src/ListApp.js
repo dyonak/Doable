@@ -10,6 +10,7 @@ export class ListApp {
 
     PubSub.subscribe("list_activated", (msg, data) => {
       console.log("list activated published with id " + data.id);
+      this.activeList = data.id;
       this.lists.forEach((list) => {
         if (list.id != data.id) {
           list.isActive = false;
@@ -25,13 +26,7 @@ export class ListApp {
       let list = new List(data.name);
       this.activeList = list.id;
       this.lists.push(list);
-      PubSub.publish("list_activated", {
-        id: list.id,
-        items: list.items,
-      });
-      PubSub.publish("lists_updated", {
-        lists: this.lists,
-      });
+      this.lists.find((list) => list.id == this.activeList).activateList();
     });
 
     PubSub.subscribe("user_deleted_list", (msg, data) => {
@@ -42,11 +37,12 @@ export class ListApp {
         return list.id != deletedListId;
       });
       PubSub.publish("lists_updated", { lists: this.lists });
-      //Check to see if this was the active list, activate a different list if so
+      //Check for final list removed
       if (this.lists.length === 0) {
         PubSub.publish("all_lists_removed");
         return;
       }
+      //Check to see if this was the active list, activate a different list if so
       if (this.activeList == deletedListId) {
         let newActiveList = this.lists.find(
           (list) => list.id != this.activeList
@@ -93,17 +89,13 @@ export class ListApp {
     });
 
     PubSub.subscribe("user_loaded_list", (msg, data) => {
-      this.lists.forEach((list) => {
-        if (list.id === data.id) {
-          this.activeList = data.id;
-          list.activateList();
-        }
-      });
+      this.lists.find((list) => list.id == data.id).activateList();
     });
 
     PubSub.subscribe("lists_retrieved_from_storage", (msg, data) => {
       this.loadListsFromStorage(data);
     });
+
     PubSub.publish("app_started");
   }
 
@@ -129,21 +121,6 @@ export class ListApp {
       this.lists.push(newList);
     });
     PubSub.publish("lists_updated", { lists: this.lists });
-    this.lists.find((list) => list.id == this.activeList).activateList();
-  }
-
-  addList(list, createdDate = new Date(), tags = [], items = []) {
-    let newList = new List(
-      (name = list),
-      (createdDate = createdDate),
-      (tags = tags),
-      (items = items)
-    );
-    this.lists.push(newList);
-    PubSub.publish("lists_updated", {
-      lists: this.lists,
-    });
-    return newList;
   }
 
   getIdFromClass(className) {

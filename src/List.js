@@ -12,15 +12,7 @@ export class List {
     this.id = List.#id;
     List.#incrementID();
     this.isActive = false;
-    this.activateList();
-
-    // PubSub.subscribe("list_activated", (msg, data) => {
-    //   if (this.id !== data.id) {
-    //     this.isActive = false;
-    //   } else {
-    //     this.isActive = true;
-    //   }
-    // });
+    //this.activateList();
   }
   activateList() {
     this.isActive = true;
