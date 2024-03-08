@@ -293,5 +293,17 @@ li span {
 }
 
 .strikethrough {
-  text-decoration: line-through wavy 5px var(--third-color);
+  text-decoration: line-through wavy 8px
+    color-mix(in srgb, var(--fifth-color), transparent 30%);
+}
+.toast {
+  position: relative;
+  opacity: 70%;
+  width: 100px;
+  text-align: center;
+  top: -75px;
+  left: calc(100vw - 175px);
+  padding: 15px;
+  margin-bottom: 15px;
+  background: var(--fifth-color);
 }

@@ -9,7 +9,6 @@ export class ListApp {
     this.activeList = 0;
 
     PubSub.subscribe("list_activated", (msg, data) => {
-      console.log("list activated published with id " + data.id);
       this.activeList = data.id;
       this.lists.forEach((list) => {
         if (list.id != data.id) {
@@ -66,7 +65,6 @@ export class ListApp {
       this.lists
         .find((element) => element.id === this.activeList)
         .addItem(new Todo((name = data.name)));
-      console.log(this.activeList, data);
       PubSub.publish("lists_updated", { lists: this.lists });
     });
 

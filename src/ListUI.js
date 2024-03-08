@@ -21,8 +21,8 @@ export class ListUi {
     this.addListDiv.addEventListener("click", (e) => this.toggleListInput(e));
     this.addItemDiv.addEventListener("click", (e) => this.toggleItemInput(e));
 
-    this.addListInput.addEventListener("keypress", (e) => this.addList(e));
-    this.addItemInput.addEventListener("keypress", (e) => this.addItem(e));
+    this.addListInput.addEventListener("keyup", (e) => this.addList(e));
+    this.addItemInput.addEventListener("keyup", (e) => this.addItem(e));
 
     document.addEventListener("keyup", (e) => this.handleShortcuts(e));
 
@@ -59,25 +59,30 @@ export class ListUi {
     }
     //Check for esc
     //Close/clear all current interactions
-    if (e.key === "Escape") {
+    if (e.key == "Escape") {
       this.addItemLi.style.display = "none";
       this.addListLi.style.display = "none";
     }
   }
   toggleItemInput(e) {
+    this.addItemInput.value = "";
     this.addItemLi.style.display =
       this.addItemLi.style.display === "none" ? "block" : "none";
     this.addItemInput.focus();
   }
 
   toggleListInput(e) {
+    this.addListInput.value = "";
     this.addListLi.style.display =
       this.addListLi.style.display === "none" ? "block" : "none";
     this.addListInput.focus();
-    this.addItemInput.value = "";
   }
 
   addList(e) {
+    if (e.key == "Escape") {
+      this.toggleListInput(e);
+      return;
+    }
     if (e.key !== "Enter") return;
     if (this.addListInput.value === "") return;
     PubSub.publish("user_created_list", {
@@ -88,6 +93,10 @@ export class ListUi {
   }
 
   addItem(e) {
+    if (e.key == "Escape") {
+      this.toggleItemInput(e);
+      return;
+    }
     if (e.key !== "Enter") return;
     if (this.addItemInput.value === "") return;
     PubSub.publish("user_created_item", {
@@ -143,9 +152,10 @@ export class ListUi {
       let faStyle = "clocksquare".includes(action) ? "fa-regular" : "fa-solid";
       actionElement.classList.add(faStyle);
       actionElement.classList.add("fa-" + action);
-      actionElement.addEventListener("click", (e) =>
-        this.processQuickAction(action, element)
-      );
+      actionElement.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.processQuickAction(action, element);
+      });
       element.insertAdjacentElement("afterbegin", actionElement);
     });
   }
