@@ -17,6 +17,7 @@ new (class Storage {
 
   retrieveLists() {
     let lists = JSON.parse(localStorage.getItem("lists"));
+    if (!lists) return;
     //localStorage.clear();
     PubSub.publish("lists_retrieved_from_storage", { lists: lists });
     //Object.assign(JSON.parse(localStorage.getItem(id)), new Todo());
