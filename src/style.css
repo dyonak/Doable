@@ -236,7 +236,7 @@ main {
 }
 
 li i {
-  float: left;
+  float: right;
   color: var(--third-color);
   padding-right: 10px;
 }
@@ -252,6 +252,11 @@ li span {
 .fa-square,
 .fa-square-check {
   color: var(--second-color);
+  float: left;
+}
+
+.fa-pen {
+  color: var(--third-color);
 }
 
 .fa-clock {
@@ -288,5 +293,5 @@ li span {
 }
 
 .strikethrough {
-  text-decoration: line-through wavy 2px var(--third-color);
+  text-decoration: line-through wavy 5px var(--third-color);
 }
