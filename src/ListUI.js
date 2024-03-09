@@ -237,7 +237,10 @@ export class ListUi {
       dueDistanceDiv.classList.add("overdue");
     }
 
-    if (dueDate - Date.now() < 24 * 60 * 60 * 1000) {
+    if (
+      dueDate - Date.now() < 24 * 60 * 60 * 1000 &&
+      dueDate - Date.now() > 0
+    ) {
       dueDistanceDiv.classList.add("dueToday");
     }
 
