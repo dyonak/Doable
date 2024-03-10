@@ -296,7 +296,7 @@ li span {
   text-decoration: line-through wavy 8px
     color-mix(in srgb, var(--fifth-color), transparent 30%);
 }
-.toast {
+/* .toast {
   position: relative;
   opacity: 70%;
   width: 100px;
@@ -306,4 +306,27 @@ li span {
   padding: 15px;
   margin-bottom: 15px;
   background: var(--fifth-color);
+} */
+
+.toasts {
+  position: fixed;
+  min-width: 100vw;
+  z-index: 9999;
+  bottom: 20px;
+  left: calc(100vw - 13rem);
+  margin: 0px;
+  padding: 0px;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.toast {
+  position: relative;
+  min-width: 10rem;
+  max-width: 10rem;
+  text-align: center;
+  padding: 10px;
+  margin-top: 5px;
+  background-color: var(--fifth-color);
+  opacity: 90%;
 }

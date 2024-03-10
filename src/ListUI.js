@@ -34,9 +34,6 @@ export class ListUi {
       this.displayLists(data.lists);
     });
 
-    PubSub.subscribe("list_activated", (msg, data) => {
-      this.displayActiveList(data.id, data.items);
-    });
     PubSub.subscribe("all_lists_removed", (msg) => {
       this.clearLists();
       this.clearItemList();
@@ -176,6 +173,11 @@ export class ListUi {
         id: element.classList[1],
       });
     }
+    if (action === "pen") {
+      PubSub.publish("editing_" + element.classList[0], {
+        id: element.classList[1],
+      });
+    }
   }
 
   displayActiveList(id, items) {
@@ -192,6 +194,7 @@ export class ListUi {
         );
         console.log("Displaying " + item.title);
       });
+      console.log("Displayed items.");
     }
     //Set active class for this list's ID
     let listDivs = document.querySelectorAll(".list");

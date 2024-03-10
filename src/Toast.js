@@ -1,7 +1,9 @@
+import { addMilliseconds } from "date-fns";
+
 new (class Toast {
   constructor() {
-    this.TOAST_TIMEOUT = 3000;
-    this.header = document.querySelector("header");
+    this.TOAST_TIMEOUT = 3500;
+    this.toastsDiv = document.querySelector(".toasts");
     PubSub.subscribe("*", (msg, data) => {
       this.prepToast(msg, data);
     });
@@ -20,9 +22,14 @@ new (class Toast {
   popToast(msg) {
     let toastDiv = document.createElement("div");
     toastDiv.classList.add("toast");
-    toastDiv.textContent = msg;
 
-    this.header.appendChild(toastDiv);
+    let icon = document
+      .createElement("i")
+      .classList.add("fa-solid", "fa-champagne-glasses");
+    //toastDiv.appendChild(icon);
+
+    toastDiv.textContent += msg;
+    this.toastsDiv.appendChild(toastDiv);
     setTimeout(this.eatToast, this.TOAST_TIMEOUT);
   }
 
