@@ -148,7 +148,7 @@ export class ListUi {
       //TODO: Fix this hacky long string approach to change the solid/regular class
       let faStyle = "clocksquare".includes(action) ? "fa-regular" : "fa-solid";
       actionElement.classList.add(faStyle);
-      actionElement.classList.add("fa-" + action);
+      actionElement.classList.add("fa-" + action, "grow");
       actionElement.addEventListener("click", (e) => {
         e.stopPropagation();
         this.processQuickAction(action, element);
@@ -185,9 +185,8 @@ export class ListUi {
     this.clearItemList();
     if (items.length > 0) {
       items.sort((a, b) => {
-        return b.isComplete - a.isComplete || b.createdDate - a.createdDate;
+        return b.isComplete - a.isComplete || b.dueDate - a.dueDate;
       });
-      let sortedItems = this.sortItems(items);
 
       items.forEach((item) => {
         this.displayItem(
@@ -208,12 +207,6 @@ export class ListUi {
         listDiv.classList.remove("active");
       if (listDiv.classList.contains("list-" + id))
         listDiv.classList.add("active");
-    });
-  }
-
-  sortItems(items) {
-    items.sort((a, b) => {
-      return b.isComplete - a.isComplete;
     });
   }
 

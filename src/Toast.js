@@ -22,6 +22,7 @@ new (class Toast {
   popToast(msg) {
     let toastDiv = document.createElement("div");
     toastDiv.classList.add("toast");
+    toastDiv.classList.add("animate", "pop");
 
     let icon = document
       .createElement("i")
