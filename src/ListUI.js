@@ -153,7 +153,7 @@ export class ListUi {
         e.stopPropagation();
         this.processQuickAction(action, element);
       });
-      element.insertAdjacentElement("afterbegin", actionElement);
+      element.appendChild(actionElement);
     });
   }
 
@@ -184,6 +184,11 @@ export class ListUi {
     //Update items area
     this.clearItemList();
     if (items.length > 0) {
+      items.sort((a, b) => {
+        return b.isComplete - a.isComplete || b.createdDate - a.createdDate;
+      });
+      let sortedItems = this.sortItems(items);
+
       items.forEach((item) => {
         this.displayItem(
           item.title,
@@ -206,36 +211,58 @@ export class ListUi {
     });
   }
 
+  sortItems(items) {
+    items.sort((a, b) => {
+      return b.isComplete - a.isComplete;
+    });
+  }
+
   displayItem(title, id, prio, isComplete, dueDate) {
+    //Setup li with classes
     let li = document.createElement("li");
     li.classList.add("item");
     li.classList.add("item-" + id);
-    li.textContent = title;
+
+    //Create the check-square used to complete the item
+    let completeIcon = isComplete ? "square-check" : "square";
+    this.appendQuickActions(li, [completeIcon]);
+
+    //Create title span to hold the item's title
+    let titleSpan = document.createElement("span");
+    titleSpan.classList.add("itemTitle");
+    titleSpan.textContent = title;
+    li.appendChild(titleSpan);
 
     //quick actions to be applied are font awesome icons (eg - 'trash' here will add an i element with the fa-trash icon)
-    let completeIcon = isComplete ? "square-check" : "square";
+    this.appendQuickActions(li, ["trash", "pen"]);
 
-    this.appendQuickActions(li, ["trash", "pen", completeIcon]);
-
+    //Add due date info
+    this.displayItemDueDateInfo(li, dueDate);
     //Style based on item parameters
     li.style.opacity = isComplete && "60%";
     if (isComplete) {
       li.classList.add("strikethrough");
     }
 
-    this.displayItemsDueDateInfo(li, dueDate);
     this.itemsBase.insertBefore(li, this.itemsBase.children[0]);
   }
 
-  displayItemsDueDateInfo(li, dueDate) {
-    //Add due date info
-    let dueDistance = formatDistance(dueDate, Date.now(), { addSuffix: true });
+  displayItemDueDateInfo(li, dueDate) {
+    //Create due distance div
     let dueDistanceDiv = document.createElement("span");
+    dueDistanceDiv.classList.add("dueDistance");
+    //Create and add classes for icon
+    let dueDistanceIcon = document.createElement("i");
+    dueDistanceIcon.classList.add("fa-regular", "fa-clock");
+    dueDistanceDiv.appendChild(dueDistanceIcon);
 
     //Add text
-    dueDistanceDiv.textContent = dueDistance;
-    dueDistanceDiv.classList.add("dueDistance");
+    let dueDistance = formatDistance(dueDate, Date.now(), { addSuffix: true });
+    let dueDistanceTextSpan = document.createElement("span");
+    dueDistanceTextSpan.textContent = dueDistance;
+    dueDistanceDiv.appendChild(dueDistanceTextSpan);
 
+    //Style based on time until due date
     if (dueDate - Date.now() < 0) {
       dueDistanceDiv.classList.add("overdue");
     }
@@ -247,10 +274,6 @@ export class ListUi {
       dueDistanceDiv.classList.add("dueToday");
     }
 
-    //Add icon
-    let clockIcon = document.createElement("i");
-    clockIcon.classList.add("fa-regular", "fa-clock");
-    dueDistanceDiv.insertAdjacentElement("beforeend", clockIcon);
     li.appendChild(dueDistanceDiv);
   }
 }

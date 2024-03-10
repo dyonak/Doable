@@ -212,8 +212,6 @@ main {
 }
 
 .itemsContainer {
-  display: flex;
-  flex-direction: column;
   font-size: x-large;
 }
 
@@ -226,8 +224,6 @@ main {
 }
 
 .listsContainer {
-  display: flex;
-  flex-direction: column;
   font-size: x-large;
 }
 
@@ -236,13 +232,8 @@ main {
 }
 
 li i {
-  float: right;
   color: var(--third-color);
   padding-right: 10px;
-}
-
-li span {
-  float: right;
 }
 
 .fa-trash {
@@ -252,7 +243,6 @@ li span {
 .fa-square,
 .fa-square-check {
   color: var(--second-color);
-  float: left;
 }
 
 .fa-pen {
@@ -263,8 +253,26 @@ li span {
   color: var(--font);
 }
 
+.itemsContainer > .fa-trash,
+.itemsContainer > .fa-pen {
+  padding-top: 10px;
+}
+
+.fa-trash,
+.fa-pen {
+  float: right;
+}
+
+.dueDistance {
+  padding-top: 5px;
+  font-size: medium;
+  display: flex;
+  flex-direction: row;
+}
+
 .listsContainer .list:hover {
   background-color: var(--second-color);
+  border-right: 10px var(--second-color) solid;
 }
 
 .listsContainer li {
@@ -275,21 +283,12 @@ li span {
   border-right: 10px var(--second-color) solid;
 }
 
-.dueDistance {
-  padding-right: 20px;
-}
-
 .overdue {
   color: var(--fourth-color);
 }
 
 .dueToday {
   color: var(--third-color);
-}
-
-.dueDistance {
-  display: flex;
-  flex-direction: row-reverse;
 }
 
 .strikethrough {
