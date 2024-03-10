@@ -216,7 +216,7 @@ main {
 }
 
 .itemsContainer li {
-  padding: 10px 10px 20px 20px;
+  padding: 15px 10px 10px 20px;
 }
 
 .itemsContainer [class*="item"]:hover {
@@ -292,19 +292,9 @@ li i {
 
 .strikethrough {
   text-decoration: line-through wavy 8px
-    color-mix(in srgb, var(--fifth-color), transparent 30%);
-}
-/* .toast {
-  position: relative;
+    color-mix(in srgb, var(--fifth-color), transparent 40%);
   opacity: 70%;
-  width: 100px;
-  text-align: center;
-  top: -75px;
-  left: calc(100vw - 175px);
-  padding: 15px;
-  margin-bottom: 15px;
-  background: var(--fifth-color);
-} */
+}
 
 .toasts {
   position: fixed;
@@ -344,4 +334,12 @@ li i {
     opacity: 1;
     transform: scale(1, 1);
   }
+}
+
+.itemsContainer:hover li {
+  opacity: 0.6;
+}
+
+.itemsContainer li:hover {
+  opacity: 1;
 }

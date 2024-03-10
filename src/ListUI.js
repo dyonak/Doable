@@ -24,6 +24,9 @@ export class ListUi {
     this.addListInput.addEventListener("keyup", (e) => this.addList(e));
     this.addItemInput.addEventListener("keyup", (e) => this.addItem(e));
 
+    this.addListInput.addEventListener("blur", (e) => this.toggleListInput(e));
+    this.addItemInput.addEventListener("blur", (e) => this.toggleItemInput(e));
+
     document.addEventListener("keyup", (e) => this.handleShortcuts(e));
 
     PubSub.subscribe("item_added", (msg, data) => {
@@ -65,12 +68,16 @@ export class ListUi {
     this.addItemInput.value = "";
     this.addItemLi.style.display =
       this.addItemLi.style.display === "none" ? "block" : "none";
+    this.addItemDiv.style.display =
+      this.addItemLi.style.display === "none" ? "block" : "none";
     this.addItemInput.focus();
   }
 
   toggleListInput(e) {
     this.addListInput.value = "";
     this.addListLi.style.display =
+      this.addListLi.style.display === "none" ? "block" : "none";
+    this.addListDiv.style.display =
       this.addListLi.style.display === "none" ? "block" : "none";
     this.addListInput.focus();
   }
@@ -85,8 +92,7 @@ export class ListUi {
     PubSub.publish("user_created_list", {
       name: this.addListInput.value,
     });
-    this.addListInput.value = "";
-    this.addListLi.style.display = "none";
+    this.toggleListInput(e);
   }
 
   addItem(e) {
@@ -99,8 +105,7 @@ export class ListUi {
     PubSub.publish("user_created_item", {
       name: this.addItemInput.value,
     });
-    this.addItemInput.value = "";
-    this.addItemLi.style.display = "none";
+    this.toggleItemInput(e);
   }
 
   clearLists() {
@@ -232,7 +237,6 @@ export class ListUi {
     //Add due date info
     this.displayItemDueDateInfo(li, dueDate);
     //Style based on item parameters
-    li.style.opacity = isComplete && "60%";
     if (isComplete) {
       li.classList.add("strikethrough");
     }
