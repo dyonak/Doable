@@ -12,7 +12,6 @@ new (class Toast {
   prepToast(topic, data) {
     //Guard clause to limit toasts to user actions.
     if (!topic.includes("user")) return;
-    console.log(data);
     let msg = topic.replace("user_", "");
     msg = msg.replace("_", " ");
     msg = msg.charAt(0).toUpperCase() + msg.slice(1);

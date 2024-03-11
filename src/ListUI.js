@@ -182,6 +182,14 @@ export class ListUi {
       PubSub.publish("editing_" + element.classList[0], {
         id: element.classList[1],
       });
+      let detailsContainer = document.querySelector(
+        "." + element.classList[1] + " .detailsForm"
+      );
+      detailsContainer.style.display =
+        detailsContainer.style.display == "grid" ? "none" : "grid";
+      detailsContainer.parentElement.classList.contains("active-item")
+        ? detailsContainer.parentElement.classList.remove("active-item")
+        : detailsContainer.parentElement.classList.add("active-item");
     }
   }
 
@@ -198,12 +206,12 @@ export class ListUi {
           item.title,
           item.id,
           item.priority,
+          item.description,
           item.isComplete,
-          item.dueDate
+          item.dueDate,
+          item.tags
         );
-        console.log("Displaying " + item.title);
       });
-      console.log("Displayed items.");
     }
     //Set active class for this list's ID
     let listDivs = document.querySelectorAll(".list");
@@ -215,7 +223,7 @@ export class ListUi {
     });
   }
 
-  displayItem(title, id, prio, isComplete, dueDate) {
+  displayItem(title, id, priority, description, isComplete, dueDate, tags) {
     //Setup li with classes
     let li = document.createElement("li");
     li.classList.add("item");
@@ -241,6 +249,30 @@ export class ListUi {
       li.classList.add("strikethrough");
     }
 
+    //Add expanded div with additional info, this will default to display: none
+    let detailsContainer = document.createElement("form");
+    detailsContainer.classList.add("detailsContainer", "detailsForm");
+    console.log(format(dueDate, "yyyy-MM-dd'T'HH:mm:ss.SSS"));
+    detailsContainer.innerHTML = `
+    <label for="todoTitle">Todo</label>
+    <input type="input" name="todoTitle" id="todoTitle" value="${title}" />
+
+    <label for="todoDueDate">Due Date</label>
+    <input type="datetime-local" height="100" name="todoDueDate" id="todoDueDate" value="${format(
+      dueDate,
+      "yyyy-MM-dd'T'HH:mm"
+    )}" />
+
+    <label for="todoDescription">Description</label>
+    <textarea type="input" name="todoDescription" id="todoDescription"  rows="5" cols="100">${description}</textarea>
+
+    <label for="todoPriority">Priority</label>
+    <input type="number" name="todoPriority" id="todoPriority" value="${priority}" min="1" max="4" />
+
+    <button class="submitTodoEdits"><i class="fa-regular fa-floppy-disk"></i></button>
+    `;
+
+    li.appendChild(detailsContainer);
     this.itemsBase.insertBefore(li, this.itemsBase.children[0]);
   }
 
@@ -248,6 +280,7 @@ export class ListUi {
     //Create due distance div
     let dueDistanceDiv = document.createElement("span");
     dueDistanceDiv.classList.add("dueDistance");
+
     //Create and add classes for icon
     let dueDistanceIcon = document.createElement("i");
     dueDistanceIcon.classList.add("fa-regular", "fa-clock");

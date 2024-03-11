@@ -223,6 +223,10 @@ main {
   background-color: var(--fifth-color);
 }
 
+.active-item {
+  background-color: var(--fifth-color);
+}
+
 .grow {
   transition: all 0.2s ease-in-out;
 }
@@ -239,7 +243,6 @@ main {
 }
 
 li i {
-  color: var(--third-color);
   margin-right: 10px;
 }
 
@@ -342,4 +345,64 @@ li i {
 
 .itemsContainer li:hover {
   opacity: 1;
+}
+
+.detailsForm {
+  display: none;
+  padding-top: 20px;
+  grid-template-columns: 1fr 2fr 1fr 2fr;
+  grid-auto-rows: auto;
+  padding-bottom: 20px;
+}
+
+.detailsContainer label,
+.detailsForm input {
+  padding: 15px;
+}
+
+.detailsContainer input {
+  height: 10px;
+  font-size: large;
+}
+
+.detailsContainer label .todoTitle {
+  grid-column: 1/2;
+  grid-row: 1/2;
+}
+
+.detailsContainer input #todoTitle {
+  grid-column: 2/3;
+  grid-row: 1/2;
+}
+
+label #todoDescription {
+  grid-column: 3/4;
+  grid-row: 1/3;
+}
+
+input #todoDescription {
+  grid-column: 4/5;
+  grid-row: 1/3;
+}
+
+.detailsContainer button {
+  grid-column: 4/5;
+  grid-row: 3/4;
+  justify-self: end;
+}
+
+.detailsContainer textarea {
+  font-size: large;
+}
+
+.detailsContainer button {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+  font-size: xx-large;
+  color: var(--second-color);
 }
