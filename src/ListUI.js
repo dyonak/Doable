@@ -269,7 +269,7 @@ export class ListUi {
     <label for="todoPriority">Priority</label>
     <input type="number" name="todoPriority" id="todoPriority" value="${priority}" min="1" max="4" />
 
-    <button class="submitTodoEdits"><i class="fa-regular fa-floppy-disk"></i></button>
+    <button class="submitTodoEdits"><i class="grow fa-regular fa-floppy-disk"></i></button>
     `;
 
     li.appendChild(detailsContainer);

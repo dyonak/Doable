@@ -339,6 +339,10 @@ li i {
   }
 }
 
+.itemTitle {
+  font-weight: 600;
+}
+
 .itemsContainer:hover li {
   opacity: 0.6;
 }
@@ -353,11 +357,18 @@ li i {
   grid-template-columns: 1fr 2fr 1fr 2fr;
   grid-auto-rows: auto;
   padding-bottom: 20px;
+  padding-right: 100px;
+  align-content: center;
 }
 
 .detailsContainer label,
 .detailsForm input {
   padding: 15px;
+}
+
+.todoDueDate {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: larger;
 }
 
 .detailsContainer input {
