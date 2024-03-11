@@ -4,6 +4,7 @@ import {
   formatDistanceToNow,
   formatDistanceToNowStrict,
   formatRelative,
+  parseISO,
 } from "date-fns";
 
 export class ListUi {
@@ -44,6 +45,10 @@ export class ListUi {
   }
 
   handleShortcuts(e) {
+    if (document.querySelector(".active-item")) {
+      if (e.key == "Enter") this.processItemEdits(e);
+      return;
+    }
     if (
       this.addItemLi.style.display === "block" ||
       this.addListLi.style.display === "block"
@@ -182,9 +187,17 @@ export class ListUi {
       PubSub.publish("editing_" + element.classList[0], {
         id: element.classList[1],
       });
+
+      if (element.classList[0] === "list") return;
+
+      //Handle item edits
       let detailsContainer = document.querySelector(
         "." + element.classList[1] + " .detailsForm"
       );
+
+      if (detailsContainer.style.display == "grid") this.processItemEdits();
+
+      //Toggle the display of the details form
       detailsContainer.style.display =
         detailsContainer.style.display == "grid" ? "none" : "grid";
       detailsContainer.parentElement.classList.contains("active-item")
@@ -250,30 +263,70 @@ export class ListUi {
     }
 
     //Add expanded div with additional info, this will default to display: none
-    let detailsContainer = document.createElement("form");
+    let detailsContainer = document.createElement("div");
     detailsContainer.classList.add("detailsContainer", "detailsForm");
     console.log(format(dueDate, "yyyy-MM-dd'T'HH:mm:ss.SSS"));
     detailsContainer.innerHTML = `
-    <label for="todoTitle">Todo</label>
-    <input type="input" name="todoTitle" id="todoTitle" value="${title}" />
+    <label for="todoTitle" id="todoTitleLabel">Todo</label>
+    <input type="input" name="todoTitle" tabindex="1" id="todoTitle" value="${title}" />
 
-    <label for="todoDueDate">Due Date</label>
-    <input type="datetime-local" height="100" name="todoDueDate" id="todoDueDate" value="${format(
+    <label for="todoDescription" id="todoDescriptionLabel">Description</label>
+    <textarea type="input" name="todoDescription" tabindex="4" id="todoDescription"  rows="5" cols="100">${description}</textarea>
+
+    <label for="todoDueDate" id="todoDueDateLabel">Due Date</label>
+    <input type="datetime-local" height="100" tabindex="2" name="todoDueDate" id="todoDueDate" value="${format(
       dueDate,
       "yyyy-MM-dd'T'HH:mm"
     )}" />
 
-    <label for="todoDescription">Description</label>
-    <textarea type="input" name="todoDescription" id="todoDescription"  rows="5" cols="100">${description}</textarea>
+    <label for="todoPriority" id="todoPriorityLabel">Priority</label>
+    <input type="number" name="todoPriority" tabindex="3" id="todoPriority" value="${priority}" min="1" max="4" />`;
 
-    <label for="todoPriority">Priority</label>
-    <input type="number" name="todoPriority" id="todoPriority" value="${priority}" min="1" max="4" />
+    //Create the button 'fa-floppy-disk' and the event listener for processing changes
+    let saveButton = document.createElement("i");
+    saveButton.classList.add("fa-regular", "fa-floppy-disk", "grow");
 
-    <button class="submitTodoEdits"><i class="grow fa-regular fa-floppy-disk"></i></button>
-    `;
+    saveButton.addEventListener("click", () => this.processItemEdits());
 
+    detailsContainer.appendChild(saveButton);
+
+    //Append the detailscontainer to the li
     li.appendChild(detailsContainer);
+
     this.itemsBase.insertBefore(li, this.itemsBase.children[0]);
+  }
+
+  processItemEdits() {
+    //Get all the current item's info from the UI
+    let activeItemLi = document.querySelector(".active-item");
+    let id = activeItemLi.classList[1].replace("item-", "");
+    let title = activeItemLi.querySelector("#todoTitle").value;
+    let dueDate = activeItemLi.querySelector("#todoDueDate").value;
+
+    //Parse and format the date back to a unix timestamp
+    dueDate = new Date(dueDate).valueOf();
+
+    let priority = activeItemLi.querySelector("#todoPriority").value;
+    let description = activeItemLi.querySelector("#todoDescription").value;
+
+    console.log({
+      id: id,
+      title: title,
+      dueDate: dueDate,
+      priority: priority,
+      description: description,
+    });
+
+    //Publish check for changes
+    PubSub.publish("item_edit_requested", {
+      id: id,
+      title: title,
+      dueDate: dueDate,
+      priority: priority,
+      description: description,
+    });
+
+    //If changed ListApp will publish an update_lists
   }
 
   displayItemDueDateInfo(li, dueDate) {

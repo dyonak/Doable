@@ -68,6 +68,40 @@ export class ListApp {
       PubSub.publish("lists_updated", { lists: this.lists });
     });
 
+    PubSub.subscribe("item_edit_requested", (msg, data) => {
+      let itemToCheck = this.lists
+        .find((element) => element.id === this.activeList)
+        .items.find((item) => item.id == data.id);
+      let itemChanged = false;
+
+      if (itemToCheck.priority !== data.priority) itemChanged = true;
+      if (Math.abs(itemToCheck.dueDate - data.dueDate) >= 60000)
+        itemChanged = true;
+      if (itemToCheck.description !== data.description) itemChanged = true;
+      if (itemToCheck.title !== data.title) itemChanged = true;
+      console.log(Math.abs(itemToCheck.dueDate - data.dueDate));
+      if (itemChanged) {
+        this.lists
+          .find((element) => element.id === this.activeList)
+          .items.find((item) => item.id == data.id).title = data.title;
+        this.lists
+          .find((element) => element.id === this.activeList)
+          .items.find((item) => item.id == data.id).description =
+          data.description;
+        this.lists
+          .find((element) => element.id === this.activeList)
+          .items.find((item) => item.id == data.id).dueDate = data.dueDate;
+        this.lists
+          .find((element) => element.id === this.activeList)
+          .items.find((item) => item.id == data.id).priority = data.priority;
+
+        PubSub.publish("user_edited_item");
+        PubSub.publish("lists_updated", {
+          lists: this.lists,
+        });
+      }
+    });
+
     PubSub.subscribe("user_completed_item", (msg, data) => {
       let itemIdToComplete = this.getIdFromClass(data.id);
       this.lists

@@ -268,6 +268,7 @@ li i {
 .dueDistance {
   padding-top: 10px;
   font-size: medium;
+  font-weight: 700;
   display: flex;
   flex-direction: row;
 }
@@ -353,17 +354,10 @@ li i {
 
 .detailsForm {
   display: none;
-  padding-top: 20px;
+  padding: 40px;
   grid-template-columns: 1fr 2fr 1fr 2fr;
-  grid-auto-rows: auto;
-  padding-bottom: 20px;
-  padding-right: 100px;
-  align-content: center;
-}
-
-.detailsContainer label,
-.detailsForm input {
-  padding: 15px;
+  grid-auto-rows: 75px;
+  align-items: center;
 }
 
 .todoDueDate {
@@ -371,49 +365,89 @@ li i {
   font-size: larger;
 }
 
-.detailsContainer input {
-  height: 10px;
-  font-size: large;
+.detailsContainer label,
+.detailsContainer input,
+.detailsContainer textarea {
+  color: inherit;
+  outline: none;
+  border: none;
+  font-size: x-large;
+  height: 35px;
+  padding: 10px;
+  align-self: end;
 }
 
-.detailsContainer label .todoTitle {
-  grid-column: 1/2;
-  grid-row: 1/2;
+.detailsContainer input,
+.detailsContainer textarea {
+  background-color: color-mix(in srgb, var(--fifth-color) 90%, black);
+  outline: none;
+  inset: none;
+  border-bottom: solid 5px var(--dark-mode-background);
+  font-size: x-large;
 }
 
-.detailsContainer input #todoTitle {
+.detailscontainer textarea {
+  border: none;
+  border: solid 5px var(--dark-mode-background);
+}
+
+#todoTitle {
   grid-column: 2/3;
   grid-row: 1/2;
 }
 
-label #todoDescription {
-  grid-column: 3/4;
-  grid-row: 1/3;
+#todoTitleLabel {
+  grid-column: 1/2;
+  grid-row: 1/2;
 }
 
-input #todoDescription {
-  grid-column: 4/5;
-  grid-row: 1/3;
+#todoDueDate {
+  grid-column: 2/3;
+  grid-row: 2/3;
 }
 
-.detailsContainer button {
-  grid-column: 4/5;
+#todoDueDateLabel {
+  grid-column: 1/2;
+  grid-row: 2/3;
+}
+
+#todoPriority {
+  grid-column: 2/3;
   grid-row: 3/4;
-  justify-self: end;
+}
+
+#todoPriorityLabel {
+  grid-column: 1/2;
+  grid-row: 3/4;
+}
+
+#todoTitle {
+  grid-column: 2/3;
+  grid-row: 1/2;
+}
+
+#todoDescriptionLabel {
+  grid-column: 3/4;
+  grid-row: 1/2;
+}
+
+#todoDescription {
+  grid-column: 4/5;
+  grid-row: 1/4;
 }
 
 .detailsContainer textarea {
   font-size: large;
+  height: 180px;
 }
 
 .detailsContainer button {
-  background: none;
-  color: inherit;
-  border: none;
-  padding: 0;
-  font: inherit;
-  cursor: pointer;
-  outline: inherit;
+  align-self: self-end;
+  justify-self: self-end;
+}
+.detailsContainer > .fa-floppy-disk {
   font-size: xx-large;
   color: var(--second-color);
+  grid-column: 4/5;
+  justify-self: end;
 }
