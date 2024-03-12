@@ -211,6 +211,11 @@ export class ListUi {
     this.clearItemList();
     if (items.length > 0) {
       items.sort((a, b) => {
+        console.log(
+          `Title: ${a.title} Due # sec ago: ${
+            (Date.now() - a.dueDate) / a.priority
+          }`
+        );
         return b.isComplete - a.isComplete || b.dueDate - a.dueDate;
       });
 
@@ -261,6 +266,21 @@ export class ListUi {
     if (isComplete) {
       li.classList.add("strikethrough");
     }
+
+    //Add priority tag
+    let prioIcon = document.createElement("i");
+
+    if (priority == 1) prioIcon.classList.add("fa-angles-up");
+    if (priority == 2) prioIcon.classList.add("fa-chevron-up");
+    if (priority == 3) prioIcon.classList.add("fa-chevron-right");
+    if (priority == 4) prioIcon.classList.add("fa-chevron-down");
+
+    prioIcon.classList.add("fa-solid", "priority" + priority);
+
+    li.querySelector(".dueDistance").insertBefore(
+      prioIcon,
+      li.querySelector(".fa-clock")
+    );
 
     //Add expanded div with additional info, this will default to display: none
     let detailsContainer = document.createElement("div");

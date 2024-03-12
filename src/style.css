@@ -135,9 +135,10 @@ table {
   --dark-mode-font: #eee;
   --first-color: #1982c4;
   --second-color: #8ac926;
-  --third-color: #ffca3a;
+  --third-color: #f6ae2d;
   --fourth-color: #ff595e;
   --fifth-color: #6a4c93;
+  --sixth-color: #f55d3e;
 }
 
 @media (prefers-color-scheme: light) {
@@ -450,4 +451,20 @@ li i {
   color: var(--second-color);
   grid-column: 4/5;
   justify-self: end;
+}
+
+.priority1 {
+  color: var(--fourth-color);
+}
+
+.priority2 {
+  color: var(--sixth-color);
+}
+
+.priority3 {
+  color: var(--third-color);
+}
+
+.priority4 {
+  color: var(--first-color);
 }
