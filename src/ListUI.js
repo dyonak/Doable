@@ -270,12 +270,13 @@ export class ListUi {
     //Add priority tag
     let prioIcon = document.createElement("i");
 
-    if (priority == 1) prioIcon.classList.add("fa-angles-up");
-    if (priority == 2) prioIcon.classList.add("fa-chevron-up");
-    if (priority == 3) prioIcon.classList.add("fa-chevron-right");
-    if (priority == 4) prioIcon.classList.add("fa-chevron-down");
+    prioIcon.title = "Priority " + priority;
 
-    prioIcon.classList.add("fa-solid", "priority" + priority);
+    prioIcon.classList.add(
+      "fa-solid",
+      "priority" + priority,
+      "fa-square-caret-up"
+    );
 
     li.querySelector(".dueDistance").insertBefore(
       prioIcon,
