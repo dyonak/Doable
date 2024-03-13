@@ -79,7 +79,7 @@ export class ListApp {
         itemChanged = true;
       if (itemToCheck.description !== data.description) itemChanged = true;
       if (itemToCheck.title !== data.title) itemChanged = true;
-      console.log(Math.abs(itemToCheck.dueDate - data.dueDate));
+
       if (itemChanged) {
         this.lists
           .find((element) => element.id === this.activeList)

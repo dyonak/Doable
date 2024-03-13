@@ -46,7 +46,12 @@ export class ListUi {
 
   handleShortcuts(e) {
     if (document.querySelector(".active-item")) {
-      if (e.key == "Enter") this.processItemEdits(e);
+      const activeLi = document.querySelector(".active-item");
+      if (
+        e.key == "Enter" &&
+        document.activeElement != activeLi.querySelector("#todoDescription")
+      )
+        this.processItemEdits(e);
       return;
     }
     if (
@@ -192,14 +197,18 @@ export class ListUi {
 
       //Handle item edits
       let detailsContainer = document.querySelector(
-        "." + element.classList[1] + " .detailsForm"
+        "." + element.classList[1] + " .detailsContainer"
       );
 
-      if (detailsContainer.style.display == "grid") this.processItemEdits();
+      //Process the form if we're going from open to closed
+      if (detailsContainer.style.display == "block") {
+        this.processItemEdits();
+        return;
+      }
 
-      //Toggle the display of the details form
+      //Toggle display and active state
       detailsContainer.style.display =
-        detailsContainer.style.display == "grid" ? "none" : "grid";
+        detailsContainer.style.display == "block" ? "none" : "block";
       detailsContainer.parentElement.classList.contains("active-item")
         ? detailsContainer.parentElement.classList.remove("active-item")
         : detailsContainer.parentElement.classList.add("active-item");
@@ -211,11 +220,6 @@ export class ListUi {
     this.clearItemList();
     if (items.length > 0) {
       items.sort((a, b) => {
-        console.log(
-          `Title: ${a.title} Due # sec ago: ${
-            (Date.now() - a.dueDate) / a.priority
-          }`
-        );
         return b.isComplete - a.isComplete || b.dueDate - a.dueDate;
       });
 
@@ -272,12 +276,9 @@ export class ListUi {
 
     prioIcon.title = "Priority " + priority;
 
-    prioIcon.classList.add(
-      "fa-solid",
-      "priority" + priority,
-      "fa-square-caret-up"
-    );
+    prioIcon.classList.add("fa-solid", "fa-p", "priority" + priority);
 
+    prioIcon.textContent = priority;
     li.querySelector(".dueDistance").insertBefore(
       prioIcon,
       li.querySelector(".fa-clock")
@@ -285,9 +286,9 @@ export class ListUi {
 
     //Add expanded div with additional info, this will default to display: none
     let detailsContainer = document.createElement("div");
-    detailsContainer.classList.add("detailsContainer", "detailsForm");
-    console.log(format(dueDate, "yyyy-MM-dd'T'HH:mm:ss.SSS"));
+    detailsContainer.classList.add("detailsContainer");
     detailsContainer.innerHTML = `
+    <div class="detailsForm">
     <label for="todoTitle" id="todoTitleLabel">Todo</label>
     <input type="input" name="todoTitle" tabindex="1" id="todoTitle" value="${title}" />
 
@@ -301,7 +302,8 @@ export class ListUi {
     )}" />
 
     <label for="todoPriority" id="todoPriorityLabel">Priority</label>
-    <input type="number" name="todoPriority" tabindex="3" id="todoPriority" value="${priority}" min="1" max="4" />`;
+    <input type="number" name="todoPriority" tabindex="3" id="todoPriority" value="${priority}" min="1" max="4" />
+    </div>`;
 
     //Create the button 'fa-floppy-disk' and the event listener for processing changes
     let saveButton = document.createElement("i");
@@ -310,6 +312,9 @@ export class ListUi {
     saveButton.addEventListener("click", () => this.processItemEdits());
 
     detailsContainer.appendChild(saveButton);
+
+    //Remove additional info (prio / dueDistance if marked complete)
+    if (isComplete) li.removeChild(li.querySelector(".dueDistance"));
 
     //Append the detailscontainer to the li
     li.appendChild(detailsContainer);
@@ -330,14 +335,6 @@ export class ListUi {
     let priority = activeItemLi.querySelector("#todoPriority").value;
     let description = activeItemLi.querySelector("#todoDescription").value;
 
-    console.log({
-      id: id,
-      title: title,
-      dueDate: dueDate,
-      priority: priority,
-      description: description,
-    });
-
     //Publish check for changes
     PubSub.publish("item_edit_requested", {
       id: id,
@@ -348,6 +345,10 @@ export class ListUi {
     });
 
     //If changed ListApp will publish an update_lists
+
+    //Make sure the form is closed and the active-item is turned off
+    activeItemLi.classList.remove("active-item");
+    activeItemLi.querySelector(".detailsContainer").style.display = "none";
   }
 
   displayItemDueDateInfo(li, dueDate) {
@@ -377,7 +378,6 @@ export class ListUi {
     ) {
       dueDistanceDiv.classList.add("dueToday");
     }
-
     li.appendChild(dueDistanceDiv);
   }
 }

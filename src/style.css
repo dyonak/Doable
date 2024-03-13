@@ -138,7 +138,7 @@ table {
   --third-color: #f6ae2d;
   --fourth-color: #ff595e;
   --fifth-color: #6a4c93;
-  --sixth-color: #f55d3e;
+  --sixth-color: #df6c11;
 }
 
 @media (prefers-color-scheme: light) {
@@ -217,7 +217,7 @@ main {
 }
 
 .itemsContainer li {
-  padding: 15px 10px 10px 20px;
+  padding: 25px 25px 25px 25px;
 }
 
 .itemsContainer [class*="item"]:hover {
@@ -240,7 +240,8 @@ main {
 }
 
 .listsContainer li {
-  padding: 10px 0px 10px 20px;
+  padding: 10px 0px 10px 25px;
+  font-weight: 600;
 }
 
 li i {
@@ -267,7 +268,7 @@ li i {
 }
 
 .dueDistance {
-  padding-top: 10px;
+  padding-top: 20px;
   font-size: medium;
   font-weight: 700;
   display: flex;
@@ -353,11 +354,17 @@ li i {
   opacity: 1;
 }
 
-.detailsForm {
+li > .detailsContainer {
+  padding: 30px;
   display: none;
-  padding: 40px;
-  grid-template-columns: 1fr 2fr 1fr 2fr;
-  grid-auto-rows: 75px;
+}
+
+.detailsForm {
+  display: grid;
+  grid-template-columns: auto-fill repeat(
+      minmax(200px, 1fr),
+      minmax(400px, 2fr)
+    );
   align-items: center;
 }
 
@@ -387,9 +394,9 @@ li i {
   font-size: x-large;
 }
 
-.detailscontainer textarea {
+.detailsContainer textarea {
   border: none;
-  border: solid 5px var(--dark-mode-background);
+  border-bottom: solid 5px var(--dark-mode-background);
 }
 
 #todoTitle {

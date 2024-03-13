@@ -12,7 +12,7 @@ export class Todo {
     dueDate = Date.now() + 24 * 60 * 60 * 1000,
     completedDate = null,
     isComplete = false,
-    priority = 2,
+    priority = 3,
     description = ""
   ) {
     this.title = title;
