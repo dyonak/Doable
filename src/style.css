@@ -177,7 +177,7 @@ header > img {
 
 main {
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: minmax(200px, 300px) minmax(400px, 1fr);
   background-color: var(--background);
   color: var(--font);
 }
@@ -220,11 +220,19 @@ main {
   padding: 25px 25px 25px 25px;
 }
 
+.itemsContainer li:nth-child(odd) {
+  background-color: color-mix(
+    in srgb,
+    var(--dark-mode-background) 98%,
+    var(--dark-mode-font) 2%
+  );
+}
+
 .itemsContainer [class*="item"]:hover {
   background-color: var(--fifth-color);
 }
 
-.active-item {
+li + .active-item {
   background-color: var(--fifth-color);
 }
 
@@ -343,7 +351,7 @@ li i {
 }
 
 .itemTitle {
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .itemsContainer:hover li {
@@ -360,12 +368,11 @@ li > .detailsContainer {
 }
 
 .detailsForm {
-  display: grid;
-  grid-template-columns: auto-fill repeat(
-      minmax(200px, 1fr),
-      minmax(400px, 2fr)
-    );
-  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-wrap: wrap;
 }
 
 .todoDueDate {
@@ -373,91 +380,43 @@ li > .detailsContainer {
   font-size: larger;
 }
 
-.detailsContainer label,
-.detailsContainer input,
-.detailsContainer textarea {
-  color: inherit;
-  outline: none;
-  border: none;
-  font-size: x-large;
-  height: 35px;
-  padding: 10px;
-  align-self: end;
+.detailsForm label {
+  width: 200px;
+  display: inline-block;
+  text-align: left;
 }
 
-.detailsContainer input,
-.detailsContainer textarea {
+.detailsForm div {
+  padding: 10px;
+}
+
+.detailsForm input,
+.detailsForm textarea {
+  color: inherit;
+  border: none;
   background-color: color-mix(in srgb, var(--fifth-color) 90%, black);
   outline: none;
   inset: none;
+  font-size: xx-large;
+  width: 300px;
   border-bottom: solid 5px var(--dark-mode-background);
-  font-size: x-large;
 }
 
-.detailsContainer textarea {
+.detailsForm textarea {
   border: none;
   border-bottom: solid 5px var(--dark-mode-background);
 }
 
-#todoTitle {
-  grid-column: 2/3;
-  grid-row: 1/2;
-}
-
-#todoTitleLabel {
-  grid-column: 1/2;
-  grid-row: 1/2;
-}
-
-#todoDueDate {
-  grid-column: 2/3;
-  grid-row: 2/3;
-}
-
-#todoDueDateLabel {
-  grid-column: 1/2;
-  grid-row: 2/3;
-}
-
-#todoPriority {
-  grid-column: 2/3;
-  grid-row: 3/4;
-}
-
-#todoPriorityLabel {
-  grid-column: 1/2;
-  grid-row: 3/4;
-}
-
-#todoTitle {
-  grid-column: 2/3;
-  grid-row: 1/2;
-}
-
-#todoDescriptionLabel {
-  grid-column: 3/4;
-  grid-row: 1/2;
-}
-
-#todoDescription {
-  grid-column: 4/5;
-  grid-row: 1/4;
-}
-
-.detailsContainer textarea {
+.detailsForm textarea {
   font-size: large;
   height: 180px;
 }
 
-.detailsContainer button {
-  align-self: self-end;
-  justify-self: self-end;
-}
-.detailsContainer > .fa-floppy-disk {
+.detailsForm > .fa-floppy-disk {
+  padding: 30px;
   font-size: xx-large;
   color: var(--second-color);
-  grid-column: 4/5;
-  justify-self: end;
+  align-self: end;
 }
 
 .priority1 {

@@ -51,7 +51,7 @@ export class ListUi {
         e.key == "Enter" &&
         document.activeElement != activeLi.querySelector("#todoDescription")
       )
-        this.processItemEdits(e);
+        this.processItemEdits();
       return;
     }
     if (
@@ -200,6 +200,11 @@ export class ListUi {
         "." + element.classList[1] + " .detailsContainer"
       );
 
+      if (
+        document.querySelector(".active-item") &&
+        !element.classList.contains("active-item")
+      )
+        return;
       //Process the form if we're going from open to closed
       if (detailsContainer.style.display == "block") {
         this.processItemEdits();
@@ -289,29 +294,23 @@ export class ListUi {
     detailsContainer.classList.add("detailsContainer");
     detailsContainer.innerHTML = `
     <div class="detailsForm">
-    <label for="todoTitle" id="todoTitleLabel">Todo</label>
-    <input type="input" name="todoTitle" tabindex="1" id="todoTitle" value="${title}" />
+    <div><label for="todoTitle" id="todoTitleLabel">Todo</label>
+    <input type="input" name="todoTitle" tabindex="1" id="todoTitle" value="${title}" /></div>
 
-    <label for="todoDescription" id="todoDescriptionLabel">Description</label>
-    <textarea type="input" name="todoDescription" tabindex="4" id="todoDescription"  rows="5" cols="100">${description}</textarea>
-
-    <label for="todoDueDate" id="todoDueDateLabel">Due Date</label>
+    <div><label for="todoDueDate" id="todoDueDateLabel">Due Date</label>
     <input type="datetime-local" height="100" tabindex="2" name="todoDueDate" id="todoDueDate" value="${format(
       dueDate,
       "yyyy-MM-dd'T'HH:mm"
-    )}" />
+    )}" /></div>
+    
 
-    <label for="todoPriority" id="todoPriorityLabel">Priority</label>
-    <input type="number" name="todoPriority" tabindex="3" id="todoPriority" value="${priority}" min="1" max="4" />
+    <div><label for="todoPriority" id="todoPriorityLabel">Priority</label>
+    <input type="number" name="todoPriority" tabindex="3" id="todoPriority" value="${priority}" min="1" max="4" /></div>
+
+    <div><label for="todoDescription" id="todoDescriptionLabel">Description</label>
+    <textarea type="input" name="todoDescription" tabindex="4" id="todoDescription">${description}</textarea></div>
+
     </div>`;
-
-    //Create the button 'fa-floppy-disk' and the event listener for processing changes
-    let saveButton = document.createElement("i");
-    saveButton.classList.add("fa-regular", "fa-floppy-disk", "grow");
-
-    saveButton.addEventListener("click", () => this.processItemEdits());
-
-    detailsContainer.appendChild(saveButton);
 
     //Remove additional info (prio / dueDistance if marked complete)
     if (isComplete) li.removeChild(li.querySelector(".dueDistance"));
@@ -319,6 +318,13 @@ export class ListUi {
     //Append the detailscontainer to the li
     li.appendChild(detailsContainer);
 
+    //Create the button 'fa-floppy-disk' and the event listener for processing changes
+    let saveButton = document.createElement("i");
+    saveButton.classList.add("fa-regular", "fa-floppy-disk", "grow");
+    saveButton.addEventListener("click", () => this.processItemEdits());
+    detailsContainer.querySelector(".detailsForm").appendChild(saveButton);
+
+    //Add the compeleted todo item li to the ul
     this.itemsBase.insertBefore(li, this.itemsBase.children[0]);
   }
 
