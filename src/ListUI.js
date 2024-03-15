@@ -337,7 +337,7 @@ export class ListUi {
     let saveButton = document.createElement("i");
     saveButton.classList.add("fa-regular", "fa-floppy-disk", "grow");
     saveButton.addEventListener("click", () => this.processItemEdits());
-    detailsContainer.querySelector(".detailsForm").appendChild(saveButton);
+    detailsContainer.appendChild(saveButton);
 
     //Add the compeleted todo item li to the ul
     this.itemsBase.insertBefore(li, this.itemsBase.children[0]);
