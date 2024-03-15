@@ -4,13 +4,21 @@ export class List {
   static #incrementID() {
     this.#id++;
   }
-  constructor(name, createdDate = Date.now(), tags = [], items = []) {
+  constructor(
+    name,
+    createdDate = Date.now(),
+    tags = [],
+    items = [],
+    isActive = false,
+    isArchive = false
+  ) {
     this.name = name;
     this.createdDate = createdDate;
     this.items = [];
     this.id = List.#id;
     List.#incrementID();
     this.isActive = false;
+    this.isArchive = false;
     //this.activateList();
   }
   activateList() {
@@ -32,9 +40,5 @@ export class List {
     this.items = this.items.filter((item) => {
       return item.id != itemId;
     });
-  }
-
-  archiveComplete() {
-    this.items = this.items.filter((item) => item.isComplete === false);
   }
 }

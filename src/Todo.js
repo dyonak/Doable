@@ -13,7 +13,9 @@ export class Todo {
     completedDate = null,
     isComplete = false,
     priority = 3,
-    description = ""
+    description = "",
+    listId = null,
+    isArchived = false
   ) {
     this.title = title;
     this.createdDate = createdDate;
@@ -22,6 +24,8 @@ export class Todo {
     this.isComplete = isComplete;
     this.priority = priority;
     this.description = description;
+    this.listId = null;
+    this.isArchived = false;
     this.id = Todo.#id;
     Todo.#incrementID();
 

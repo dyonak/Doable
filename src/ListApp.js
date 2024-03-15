@@ -120,6 +120,16 @@ export class ListApp {
       PubSub.publish("lists_updated", { lists: this.lists });
     });
 
+    PubSub.subscribe("user_archived_item", (msg, data) => {
+      let itemIdToArchive = this.getIdFromClass(data.id);
+      this.lists
+        .find((element) => element.id === this.activeList)
+        .items.find((item) => {
+          if (item.id == itemIdToArchive) this.moveItemtoArchive(item);
+        });
+      PubSub.publish("lists_updated", { lists: this.lists });
+    });
+
     PubSub.subscribe("user_loaded_list", (msg, data) => {
       this.lists.find((list) => list.id == data.id).activateList();
     });
@@ -134,11 +144,13 @@ export class ListApp {
   loadListsFromStorage(data) {
     let retrievedLists = data.lists;
     if (retrievedLists.length < 1) return;
+
     retrievedLists.forEach((list) => {
       let newList = new List(list.name);
       newList.createdDate = list.createDate;
       newList.tags = list.tags;
       newList.isActive = list.isActive;
+      newList.isArchive = list.isArchive;
       if (newList.isActive) this.activeList = newList.id;
       list.items.forEach((item) => {
         let newItem = new Todo(item.title);
@@ -148,14 +160,28 @@ export class ListApp {
         newItem.isComplete = item.isComplete;
         newItem.priority = item.priority;
         newItem.description = item.description;
+        newItem.listId = newList.id;
         newList.addItem(newItem);
       });
       this.lists.push(newList);
     });
-    PubSub.publish("lists_updated", { lists: this.lists });
+
+    //Now that lists are loaded check for an archive list, create one if it doesn't exist
+    if (this.lists.filter((list) => list.isArchive === true) < 1) {
+      let archiveList = new List("Archive");
+      archiveList.isArchive = true;
+      this.lists.push(archiveList);
+    }
+
+    if (this.lists) PubSub.publish("lists_updated", { lists: this.lists });
   }
 
   getIdFromClass(className) {
     return className.replace(/[^0-9]/g, "");
+  }
+
+  moveItemtoArchive(item) {
+    this.lists.find((list) => list.isArchive).items.push(item);
+    this.lists.find((list) => list.id == item.listId).removeItem(item.id);
   }
 }

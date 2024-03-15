@@ -135,31 +135,89 @@ export class ListUi {
   displayLists(lists) {
     this.clearLists();
     lists.forEach((list) => {
-      this.displayList(list.name, list.id, list.isActive);
+      this.displayList(list.name, list.id, list.isActive, list.isArchive);
       if (list.isActive) {
-        this.displayActiveList(list.id, list.items);
+        //Set active class for this list's ID
+        let listDivs = document.querySelectorAll(".list");
+        listDivs.forEach((listDiv) => {
+          if (listDiv.classList.contains("list-" + list.id)) {
+            listDiv.classList.add("active");
+            this.appendQuickActions(listDiv, ["trash", "pen", "box-archive"]);
+          } else {
+            if (listDiv.classList.contains("active"))
+              listDiv.classList.remove("active");
+            if (listDiv.querySelector(".quickActions"))
+              listDiv.querySelector(".quickActions").remove();
+          }
+        });
+        if (list.isArchive) {
+          document
+            .querySelector(".list-" + list.id + ">.quickActions")
+            .remove();
+        }
+        this.displayListItems(list.id, list.items);
       }
     });
   }
 
-  displayList(title, id, isActive) {
+  displayList(title, id, isActive, isArchive) {
     let li = document.createElement("li");
     li.classList.add("list");
     li.classList.add("list-" + id);
     if (isActive) li.classList.add("active");
-    li.textContent = title;
+
+    if (isArchive) {
+      let archiveIcon = document.createElement("i");
+      archiveIcon.classList.add("fa-solid", "fa-box-archive");
+      li.appendChild(archiveIcon);
+    }
+
+    let titleText = document.createElement("span");
+    titleText.textContent = " " + title;
+    li.appendChild(titleText);
+
     li.addEventListener("click", (e) => {
       PubSub.publish("user_loaded_list", { id });
     });
-    //quick actions to be applied, the list, are fancy awesome font icons (eg - 'trash' here will add an i element with the fa-trash icon)
-    this.appendQuickActions(li, ["trash", "pen"]);
-    this.listsBase.insertBefore(li, this.listsBase.children[0]);
+
+    if (isArchive) {
+      this.listsBase.insertBefore(li, this.addListLi);
+    } else {
+      this.listsBase.insertBefore(li, this.listsBase.children[0]);
+    }
+  }
+
+  displayListItems(id, items) {
+    //Update items area
+    this.clearItemList();
+    if (items.length > 0) {
+      items.sort((a, b) => {
+        return b.isComplete - a.isComplete || b.dueDate - a.dueDate;
+      });
+
+      items.forEach((item) => {
+        this.displayItem(
+          item.title,
+          item.id,
+          item.priority,
+          item.description,
+          item.isComplete,
+          item.dueDate,
+          item.tags
+        );
+      });
+    }
   }
 
   appendQuickActions(element, actionsList) {
     actionsList.forEach((action) => {
-      let actionElement = document.createElement("i");
+      if (!element.querySelector(".quickActions")) {
+        let quickActionsDiv = document.createElement("div");
+        quickActionsDiv.classList.add("quickActions");
+        element.appendChild(quickActionsDiv);
+      }
 
+      let actionElement = document.createElement("i");
       //TODO: Fix this hacky long string approach to change the solid/regular class
       let faStyle = "clocksquare".includes(action) ? "fa-regular" : "fa-solid";
       actionElement.classList.add(faStyle);
@@ -168,15 +226,79 @@ export class ListUi {
         e.stopPropagation();
         this.processQuickAction(action, element);
       });
-      element.appendChild(actionElement);
+
+      //Put the actions into the quick actions div unless the action is marking complete
+      if (
+        actionElement.classList.contains("fa-square-check") ||
+        actionElement.classList.contains("fa-square")
+      ) {
+        element.appendChild(actionElement);
+      } else {
+        element.querySelector(".quickActions").appendChild(actionElement);
+      }
     });
+  }
+
+  confirmAction(action, element) {
+    let actionElement = element.querySelector(".fa-" + action);
+    [...element.querySelector(".quickActions").children].forEach(
+      (child) => (child.style.display = "none")
+    );
+
+    let confirmButton = document.createElement("button");
+
+    //Set default action string
+    let actionString = "unknown action";
+
+    //Map the action (which is based on the font awesome name) to a meaningful action name for our purposes
+    if (action === "box-archive") actionString = "archive";
+    if (action === "trash") actionString = "delete";
+
+    //Format the confirmation string
+    confirmButton.textContent =
+      actionString.charAt(0).toUpperCase() + actionString.slice(1) + "?";
+    confirmButton.classList.add("red");
+
+    //Setup cancel button
+    let cancelButton = document.createElement("button");
+    cancelButton.innerHTML = "<i class='fa-solid fa-rotate-left'></i>";
+    cancelButton.classList.add("grey");
+
+    confirmButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      [...element.querySelector(".quickActions").children].forEach(
+        (child) => (child.style.display = "inline-block")
+      );
+
+      cancelButton.remove();
+      confirmButton.remove();
+      PubSub.publish("user_" + actionString + "d_" + element.classList[0], {
+        id: element.classList[1],
+      });
+    });
+
+    cancelButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      [...element.querySelector(".quickActions").children].forEach(
+        (child) => (child.style.display = "inline-block")
+      );
+      cancelButton.remove();
+      confirmButton.remove();
+    });
+    element
+      .querySelector(".quickActions")
+      .insertBefore(confirmButton, actionElement);
+    element
+      .querySelector(".quickActions")
+      .insertBefore(cancelButton, actionElement);
   }
 
   processQuickAction(action, element) {
     if (action === "trash") {
-      PubSub.publish("user_deleted_" + element.classList[0], {
-        id: element.classList[1],
-      });
+      this.confirmAction(action, element);
+    }
+    if (action === "box-archive") {
+      this.confirmAction(action, element);
     }
     if (action === "square") {
       PubSub.publish("user_completed_" + element.classList[0], {
@@ -221,36 +343,6 @@ export class ListUi {
         ? detailsContainer.classList.remove("animate", "slide")
         : detailsContainer.classList.add("animate", "slide");
     }
-  }
-
-  displayActiveList(id, items) {
-    //Update items area
-    this.clearItemList();
-    if (items.length > 0) {
-      items.sort((a, b) => {
-        return b.isComplete - a.isComplete || b.dueDate - a.dueDate;
-      });
-
-      items.forEach((item) => {
-        this.displayItem(
-          item.title,
-          item.id,
-          item.priority,
-          item.description,
-          item.isComplete,
-          item.dueDate,
-          item.tags
-        );
-      });
-    }
-    //Set active class for this list's ID
-    let listDivs = document.querySelectorAll(".list");
-    listDivs.forEach((listDiv) => {
-      if (listDiv.classList.contains("active"))
-        listDiv.classList.remove("active");
-      if (listDiv.classList.contains("list-" + id))
-        listDiv.classList.add("active");
-    });
   }
 
   displayItem(title, id, priority, description, isComplete, dueDate, tags) {
@@ -321,8 +413,9 @@ export class ListUi {
 
     </div>`;
 
-    //Remove additional info (prio / dueDistance if marked complete)
+    //Specific styling/option changes for complete items
     if (isComplete) li.removeChild(li.querySelector(".dueDistance"));
+    if (isComplete) this.appendQuickActions(li, ["box-archive"]);
 
     //Append the detailscontainer to the li
     li.appendChild(detailsContainer);
