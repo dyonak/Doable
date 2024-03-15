@@ -217,6 +217,9 @@ export class ListUi {
       detailsContainer.parentElement.classList.contains("active-item")
         ? detailsContainer.parentElement.classList.remove("active-item")
         : detailsContainer.parentElement.classList.add("active-item");
+      detailsContainer.classList.contains("animate", "slide")
+        ? detailsContainer.classList.remove("animate", "slide")
+        : detailsContainer.classList.add("animate", "slide");
     }
   }
 
@@ -305,7 +308,13 @@ export class ListUi {
     
 
     <div><label for="todoPriority" id="todoPriorityLabel">Priority</label>
-    <input type="number" name="todoPriority" tabindex="3" id="todoPriority" value="${priority}" min="1" max="4" /></div>
+    <select name="todoPriority" id="todoPriority" tabindex="3" />
+      <option value="1">Priority 1</option>
+      <option value="2">Priority 2</option>
+      <option value="3">Priority 3</option>
+      <option value="4">Priority 4</option>
+    </select>
+    </div>
 
     <div><label for="todoDescription" id="todoDescriptionLabel">Description</label>
     <textarea type="input" name="todoDescription" tabindex="4" id="todoDescription">${description}</textarea></div>
@@ -317,6 +326,12 @@ export class ListUi {
 
     //Append the detailscontainer to the li
     li.appendChild(detailsContainer);
+
+    //Set the priority field on the form to the current priority
+    let curPrio = detailsContainer.querySelector(
+      `#todoPriority option[value="${priority}"]`
+    );
+    curPrio.selected = true;
 
     //Create the button 'fa-floppy-disk' and the event listener for processing changes
     let saveButton = document.createElement("i");
