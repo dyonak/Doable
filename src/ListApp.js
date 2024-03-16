@@ -62,9 +62,9 @@ export class ListApp {
     });
 
     PubSub.subscribe("user_created_item", (msg, data) => {
-      this.lists
-        .find((element) => element.id === this.activeList)
-        .addItem(new Todo((name = data.name)));
+      let newItem = new Todo(data.name);
+      newItem.listId = this.activeList;
+      this.lists.find((list) => list.id === this.activeList).addItem(newItem);
       PubSub.publish("lists_updated", { lists: this.lists });
     });
 
@@ -128,6 +128,18 @@ export class ListApp {
           if (item.id == itemIdToArchive) this.moveItemtoArchive(item);
         });
       PubSub.publish("lists_updated", { lists: this.lists });
+    });
+
+    PubSub.subscribe("user_archived_list", (msg, data) => {
+      let listId = this.getIdFromClass(data.id);
+      this.lists
+        .find((list) => list.id == listId)
+        .items.forEach((item) => {
+          console.table(item);
+          if (item.isComplete) this.moveItemtoArchive(item);
+        });
+
+      //PubSub.publish("lists_updated", { lists: this.lists });
     });
 
     PubSub.subscribe("user_loaded_list", (msg, data) => {

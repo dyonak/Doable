@@ -240,6 +240,7 @@ export class ListUi {
   }
 
   confirmAction(action, element) {
+    console.log("confirming " + action);
     let actionElement = element.querySelector(".fa-" + action);
     [...element.querySelector(".quickActions").children].forEach(
       (child) => (child.style.display = "none")
