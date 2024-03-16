@@ -170,6 +170,7 @@ export class ListUi {
       let archiveIcon = document.createElement("i");
       archiveIcon.classList.add("fa-solid", "fa-box-archive");
       li.appendChild(archiveIcon);
+      li.classList.add("archive");
     }
 
     let titleText = document.createElement("span");
