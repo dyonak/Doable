@@ -193,19 +193,17 @@ export class ListUi {
     this.clearItemList();
     if (items.length > 0) {
       items.sort((a, b) => {
-        return b.isComplete - a.isComplete || b.dueDate - a.dueDate;
+        if (a.isArchived) {
+          //Sort the archive by completedDate with newest first
+          return a.completedDate - b.completedDate;
+        } else {
+          //Sort other lists so all completed are at the bottom and remainer go from closest to due to farthest
+          return b.isComplete - a.isComplete || b.dueDate - a.dueDate;
+        }
       });
 
       items.forEach((item) => {
-        this.displayItem(
-          item.title,
-          item.id,
-          item.priority,
-          item.description,
-          item.isComplete,
-          item.dueDate,
-          item.tags
-        );
+        this.displayItem(item);
       });
     }
   }
@@ -347,40 +345,41 @@ export class ListUi {
     }
   }
 
-  displayItem(title, id, priority, description, isComplete, dueDate, tags) {
+  displayItem(item) {
+    //title, id, priority, description, isComplete, dueDate, tags
     //Setup li with classes
     let li = document.createElement("li");
     li.classList.add("item");
-    li.classList.add("item-" + id);
+    li.classList.add("item-" + item.id);
 
     //Create the check-square used to complete the item
-    let completeIcon = isComplete ? "square-check" : "square";
+    let completeIcon = item.isComplete ? "square-check" : "square";
     this.appendQuickActions(li, [completeIcon]);
 
     //Create title span to hold the item's title
     let titleSpan = document.createElement("span");
     titleSpan.classList.add("itemTitle");
-    titleSpan.textContent = title;
+    titleSpan.textContent = item.title;
     li.appendChild(titleSpan);
 
     //quick actions to be applied are font awesome icons (eg - 'trash' here will add an i element with the fa-trash icon)
     this.appendQuickActions(li, ["trash", "pen"]);
 
     //Add due date info
-    this.displayItemDueDateInfo(li, dueDate);
+    this.displayItemDateInfo(li, item.dueDate);
     //Style based on item parameters
-    if (isComplete) {
+    if (item.isComplete) {
       li.classList.add("strikethrough");
     }
 
     //Add priority tag
     let prioIcon = document.createElement("i");
 
-    prioIcon.title = "Priority " + priority;
+    prioIcon.title = "Priority " + item.priority;
 
-    prioIcon.classList.add("fa-solid", "fa-p", "priority" + priority);
+    prioIcon.classList.add("fa-solid", "fa-p", "priority" + item.priority);
 
-    prioIcon.textContent = priority;
+    prioIcon.textContent = item.priority;
     li.querySelector(".dueDistance").insertBefore(
       prioIcon,
       li.querySelector(".fa-clock")
@@ -392,11 +391,13 @@ export class ListUi {
     detailsContainer.innerHTML = `
     <div class="detailsForm">
     <div><label for="todoTitle" id="todoTitleLabel">Todo</label>
-    <input type="input" name="todoTitle" tabindex="1" id="todoTitle" value="${title}" /></div>
+    <input type="input" name="todoTitle" tabindex="1" id="todoTitle" value="${
+      item.title
+    }" /></div>
 
     <div><label for="todoDueDate" id="todoDueDateLabel">Due Date</label>
     <input type="datetime-local" height="100" tabindex="2" name="todoDueDate" id="todoDueDate" value="${format(
-      dueDate,
+      item.dueDate,
       "yyyy-MM-dd'T'HH:mm"
     )}" /></div>
     
@@ -411,20 +412,22 @@ export class ListUi {
     </div>
 
     <div><label for="todoDescription" id="todoDescriptionLabel">Description</label>
-    <textarea type="input" name="todoDescription" tabindex="4" id="todoDescription">${description}</textarea></div>
+    <textarea type="input" name="todoDescription" tabindex="4" id="todoDescription">${
+      item.description
+    }</textarea></div>
 
     </div>`;
 
     //Specific styling/option changes for complete items
-    if (isComplete) li.removeChild(li.querySelector(".dueDistance"));
-    if (isComplete) this.appendQuickActions(li, ["box-archive"]);
+    if (item.isComplete) li.removeChild(li.querySelector(".dueDistance"));
+    if (item.isComplete) this.appendQuickActions(li, ["box-archive"]);
 
     //Append the detailscontainer to the li
     li.appendChild(detailsContainer);
 
     //Set the priority field on the form to the current priority
     let curPrio = detailsContainer.querySelector(
-      `#todoPriority option[value="${priority}"]`
+      `#todoPriority option[value="${item.priority}"]`
     );
     curPrio.selected = true;
 
@@ -433,6 +436,33 @@ export class ListUi {
     saveButton.classList.add("fa-regular", "fa-floppy-disk", "grow");
     saveButton.addEventListener("click", () => this.processItemEdits());
     detailsContainer.appendChild(saveButton);
+
+    //Style archived items
+    if (item.isArchived) {
+      li.querySelector(".fa-pen").remove();
+      li.querySelector(".fa-trash").remove();
+      li.classList.remove("strikethrough");
+      li.classList.add("archived");
+
+      //Clone the checkmark icon to remove the event listeners so this can't be marked incomplete
+      let old_check = li.querySelector(".fa-square-check");
+      let new_check = old_check.cloneNode(true);
+      li.querySelector(".fa-square-check").remove();
+
+      //Also clone box-archive to remove event listeners
+      let old_archive = li.querySelector(".fa-box-archive");
+      let new_archive = old_archive.cloneNode(true);
+      old_archive.parentNode.replaceChild(new_archive, old_archive);
+
+      this.displayItemDateInfo(li, item.completedDate);
+      li.querySelector(".dueDistance").replaceChild(
+        new_check,
+        li.querySelector(".fa-clock")
+      );
+
+      //We should have an "expand" option that pulls up details similar to the pen icon pre-archive
+      //A user likely wants the ability to view details/notes of previously completed items
+    }
 
     //Add the compeleted todo item li to the ul
     this.itemsBase.insertBefore(li, this.itemsBase.children[0]);
@@ -467,7 +497,7 @@ export class ListUi {
     activeItemLi.querySelector(".detailsContainer").style.display = "none";
   }
 
-  displayItemDueDateInfo(li, dueDate) {
+  displayItemDateInfo(li, itemDate) {
     //Create due distance div
     let dueDistanceDiv = document.createElement("span");
     dueDistanceDiv.classList.add("dueDistance");
@@ -478,19 +508,19 @@ export class ListUi {
     dueDistanceDiv.appendChild(dueDistanceIcon);
 
     //Add text
-    let dueDistance = formatDistance(dueDate, Date.now(), { addSuffix: true });
+    let dueDistance = formatDistance(itemDate, Date.now(), { addSuffix: true });
     let dueDistanceTextSpan = document.createElement("span");
     dueDistanceTextSpan.textContent = dueDistance;
     dueDistanceDiv.appendChild(dueDistanceTextSpan);
 
     //Style based on time until due date
-    if (dueDate - Date.now() < 0) {
+    if (itemDate - Date.now() < 0) {
       dueDistanceDiv.classList.add("overdue");
     }
 
     if (
-      dueDate - Date.now() < 24 * 60 * 60 * 1000 &&
-      dueDate - Date.now() > 0
+      itemDate - Date.now() < 24 * 60 * 60 * 1000 &&
+      itemDate - Date.now() > 0
     ) {
       dueDistanceDiv.classList.add("dueToday");
     }

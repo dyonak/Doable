@@ -364,6 +364,10 @@ main {
   color: var(--third-color);
 }
 
+.dueDistance > span::before {
+  content: " Due ";
+}
+
 .strikethrough {
   text-decoration: line-through wavy 8px
     color-mix(in srgb, var(--fifth-color), transparent 40%);
@@ -515,4 +519,13 @@ li > .detailsContainer {
 
 .archive span {
   color: color-mix(in srgb, var(--text) 100%, transparent 80%);
+}
+
+.archived > .dueDistance {
+  font-weight: 500;
+  color: color-mix(in srgb, var(--text) 50%, var(--second-color) 50%);
+}
+
+.archived > .dueDistance > span::before {
+  content: " Completed about ";
 }

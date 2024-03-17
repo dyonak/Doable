@@ -173,6 +173,8 @@ export class ListApp {
         newItem.priority = item.priority;
         newItem.description = item.description;
         newItem.listId = newList.id;
+        newItem.isArchived = item.isArchived;
+        if (newList.isArchive) newItem.isArchived = true;
         newList.addItem(newItem);
       });
       this.lists.push(newList);
@@ -193,6 +195,7 @@ export class ListApp {
   }
 
   moveItemtoArchive(item) {
+    item.isArchived = true;
     this.lists.find((list) => list.isArchive).items.push(item);
     this.lists.find((list) => list.id == item.listId).removeItem(item.id);
   }
