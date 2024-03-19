@@ -146,7 +146,8 @@ export class ListUi {
 
   displayLists(lists) {
     this.clearLists();
-    lists.forEach((list) => {
+    let sortedLists = lists.sort((a, b) => a.lastAccessed - b.lastAccessed);
+    sortedLists.forEach((list) => {
       this.displayList(list.name, list.id, list.isActive, list.isArchive);
       if (list.isActive) {
         //Set active class for this list's ID

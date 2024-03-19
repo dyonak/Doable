@@ -13,7 +13,7 @@ export class List {
     isArchive = false
   ) {
     this.name = name;
-    this.createdDate = createdDate;
+    this.createdDate;
     this.items = [];
     this.id = List.#id;
     List.#incrementID();
@@ -23,10 +23,12 @@ export class List {
     this.defaultDue = 24 * 60 * 60 * 1000;
     //Initial auto archive for this list set to 1 week, completed items will be archived after 1 week
     this.autoArchiveDelay = 7 * 24 * 60 * 60 * 1000;
+    this.lastAccessed;
     //this.activateList();
   }
   activateList() {
     this.isActive = true;
+    this.lastAccessed = Date.now();
     PubSub.publish("list_activated", {
       name: this.name,
       id: this.id,
