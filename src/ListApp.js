@@ -172,7 +172,7 @@ export class ListApp {
 
     retrievedLists.forEach((list) => {
       let newList = new List(list.name);
-      newList.createdDate = list.createdDate;
+      newList.createdDate = list.createdDate || Date.now();
       newList.tags = list.tags;
       newList.isActive = list.isActive;
       newList.isArchive = list.isArchive;
