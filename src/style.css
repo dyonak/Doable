@@ -341,7 +341,7 @@ main {
   padding-right: 10px;
 }
 
-.listsContainer .list:hover {
+.list:hover {
   background-color: var(--second-color);
   border-right: 10px var(--second-color) solid;
 }
@@ -528,4 +528,8 @@ li > .detailsContainer {
 
 .archived > .dueDistance > span::before {
   content: " Completed about ";
+}
+
+.list .detailsContainer input {
+  width: 250px;
 }

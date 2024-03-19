@@ -45,13 +45,25 @@ export class ListUi {
   }
 
   handleShortcuts(e) {
-    if (document.querySelector(".active-item")) {
-      const activeLi = document.querySelector(".active-item");
+    if (document.querySelector(".editing")) {
+      const activeLi = document.querySelector(".editing");
       if (
         e.key == "Enter" &&
         document.activeElement != activeLi.querySelector("#todoDescription")
-      )
-        this.processItemEdits();
+      ) {
+        if (
+          document
+            .querySelector(".detailsContainer")
+            .parentElement.classList.contains("item")
+        )
+          this.processItemEdits();
+        if (
+          document
+            .querySelector(".detailsContainer")
+            .parentElement.classList.contains("list")
+        )
+          this.processListEdits();
+      }
       return;
     }
     if (
@@ -143,11 +155,14 @@ export class ListUi {
           if (listDiv.classList.contains("list-" + list.id)) {
             listDiv.classList.add("active");
             this.appendQuickActions(listDiv, ["trash", "pen", "box-archive"]);
+            this.buildListSettings(listDiv, list);
           } else {
             if (listDiv.classList.contains("active"))
               listDiv.classList.remove("active");
             if (listDiv.querySelector(".quickActions"))
               listDiv.querySelector(".quickActions").remove();
+            if (listDiv.querySelector(".detailsContainer"))
+              listDiv.querySelector(".detailsContainer").remove();
           }
         });
         if (list.isArchive) {
@@ -155,9 +170,28 @@ export class ListUi {
             .querySelector(".list-" + list.id + ">.quickActions")
             .remove();
         }
+
         this.displayListItems(list.id, list.items);
       }
     });
+  }
+
+  buildListSettings(li, list) {
+    //Add expanded div with additional info, this will default to display: none
+    let detailsContainer = document.createElement("div");
+    detailsContainer.classList.add("detailsContainer");
+    detailsContainer.innerHTML = `
+            <div class="detailsForm">
+            <div><label for="listTitle" id="listTitleLabel">Name</label>
+            <input type="input" name="listTitle" tabindex="1" id="listTitle" value="${list.name}" /></div>
+            
+            `;
+
+    let saveButton = document.createElement("i");
+    saveButton.classList.add("fa-regular", "fa-floppy-disk", "grow", "yellow");
+    saveButton.addEventListener("click", () => this.processListEdits());
+    detailsContainer.appendChild(saveButton);
+    li.appendChild(detailsContainer);
   }
 
   displayList(title, id, isActive, isArchive) {
@@ -178,7 +212,8 @@ export class ListUi {
     li.appendChild(titleText);
 
     li.addEventListener("click", (e) => {
-      PubSub.publish("user_loaded_list", { id });
+      if (!li.classList.contains("active"))
+        PubSub.publish("user_loaded_list", { id });
     });
 
     if (isArchive) {
@@ -239,7 +274,6 @@ export class ListUi {
   }
 
   confirmAction(action, element) {
-    console.log("confirming " + action);
     let actionElement = element.querySelector(".fa-" + action);
     [...element.querySelector(".quickActions").children].forEach(
       (child) => (child.style.display = "none")
@@ -315,30 +349,42 @@ export class ListUi {
         id: element.classList[1],
       });
 
-      if (element.classList[0] === "list") return;
-
       //Handle item edits
       let detailsContainer = document.querySelector(
         "." + element.classList[1] + " .detailsContainer"
       );
 
+      console.log("." + element.classList[1] + " .detailsContainer");
+
       if (
-        document.querySelector(".active-item") &&
-        !element.classList.contains("active-item")
+        document.querySelector(".editing") &&
+        !element.classList.contains("editing")
       )
         return;
       //Process the form if we're going from open to closed
-      if (detailsContainer.style.display == "block") {
+      if (
+        detailsContainer.style.display == "block" &&
+        detailsContainer.parentElement.classList.contains("item")
+      ) {
         this.processItemEdits();
+        return;
+      }
+
+      //Process the form if we're going from open to closed
+      if (
+        detailsContainer.style.display == "block" &&
+        detailsContainer.parentElement.classList.contains("list")
+      ) {
+        this.processListEdits();
         return;
       }
 
       //Toggle display and active state
       detailsContainer.style.display =
         detailsContainer.style.display == "block" ? "none" : "block";
-      detailsContainer.parentElement.classList.contains("active-item")
-        ? detailsContainer.parentElement.classList.remove("active-item")
-        : detailsContainer.parentElement.classList.add("active-item");
+      detailsContainer.parentElement.classList.contains("editing")
+        ? detailsContainer.parentElement.classList.remove("editing")
+        : detailsContainer.parentElement.classList.add("editing");
       detailsContainer.classList.contains("animate", "slide")
         ? detailsContainer.classList.remove("animate", "slide")
         : detailsContainer.classList.add("animate", "slide");
@@ -470,7 +516,7 @@ export class ListUi {
 
   processItemEdits() {
     //Get all the current item's info from the UI
-    let activeItemLi = document.querySelector(".active-item");
+    let activeItemLi = document.querySelector(".editing");
     let id = activeItemLi.classList[1].replace("item-", "");
     let title = activeItemLi.querySelector("#todoTitle").value;
     let dueDate = activeItemLi.querySelector("#todoDueDate").value;
@@ -492,9 +538,25 @@ export class ListUi {
 
     //If changed ListApp will publish an update_lists
 
-    //Make sure the form is closed and the active-item is turned off
-    activeItemLi.classList.remove("active-item");
+    //Make sure the form is closed and the editing is turned off
+    activeItemLi.classList.remove("editing");
     activeItemLi.querySelector(".detailsContainer").style.display = "none";
+  }
+
+  processListEdits() {
+    //Get all the current item's info from the UI
+    let activeListLi = document.querySelector(".active");
+    let id = activeListLi.classList[1].replace("list-", "");
+    let title = activeListLi.querySelector("#listTitle").value.trim();
+
+    //Publish check for changes
+    PubSub.publish("list_edit_requested", {
+      id: id,
+      title: title,
+    });
+
+    activeListLi.classList.remove("editing");
+    activeListLi.querySelector(".detailsContainer").style.display = "none";
   }
 
   displayItemDateInfo(li, itemDate) {

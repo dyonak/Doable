@@ -102,6 +102,21 @@ export class ListApp {
       }
     });
 
+    PubSub.subscribe("list_edit_requested", (msg, data) => {
+      let listChanged = false;
+
+      if (data.title != this.lists.find((list) => list.id == data.id).name)
+        listChanged = true;
+
+      if (listChanged) {
+        this.lists.find((list) => list.id == data.id).name = data.title;
+        PubSub.publish("user_edited_list");
+        PubSub.publish("lists_updated", {
+          lists: this.lists,
+        });
+      }
+    });
+
     PubSub.subscribe("user_completed_item", (msg, data) => {
       let itemIdToComplete = this.getIdFromClass(data.id);
       this.lists
@@ -135,11 +150,9 @@ export class ListApp {
       this.lists
         .find((list) => list.id == listId)
         .items.forEach((item) => {
-          console.table(item);
           if (item.isComplete) this.moveItemtoArchive(item);
         });
-
-      //PubSub.publish("lists_updated", { lists: this.lists });
+      PubSub.publish("lists_updated", { lists: this.lists });
     });
 
     PubSub.subscribe("user_loaded_list", (msg, data) => {
