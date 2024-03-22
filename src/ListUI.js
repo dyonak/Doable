@@ -188,11 +188,11 @@ export class ListUi {
               list.name
             }" /></div>
             <div><label for="listDue" id="listDueLabel">New Items Due In</label>
-            <input type="input" name="listDue" tabindex="1" id="listDue" value="${
+            <input type="number" name="listDue" tabindex="1" id="listDue" value="${
               list.defaultDue / 1000 / 60 / 60 / 24
             }" />Days</div>
             <div><label for="listAutoArchive" id="listAutoArchiveLabel">Complete Items Archive in</label>
-            <input type="input" name="listAutoArchive" tabindex="1" id="listAutoArchive" value="${
+            <input type="number" name="listAutoArchive" tabindex="1" id="listAutoArchive" value="${
               list.autoArchiveDelay / 1000 / 60 / 60 / 24
             }" />Days</div>
             `;
