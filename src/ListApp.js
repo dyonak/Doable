@@ -16,6 +16,15 @@ export class ListApp {
         }
       });
       this.lists.find((list) => list.id === data.id).isActive = true;
+      //Check for items that have been complete longer than this list's archive delay
+      this.lists
+        .find((list) => list.id === data.id)
+        .items.forEach((item) => {
+          let list = this.lists.find((list) => list.id === data.id);
+          if (list.checkItemForArchivability(item)) {
+            this.moveItemtoArchive(item);
+          }
+        });
       PubSub.publish("lists_updated", {
         lists: this.lists,
       });
@@ -205,6 +214,7 @@ export class ListApp {
         newItem.listId = newList.id;
         newItem.isArchived = item.isArchived;
         if (newList.isArchive) newItem.isArchived = true;
+        if (newList.isArchive && !newItem.completedDate) newItem.markComplete();
         newList.addItem(newItem);
       });
       this.lists.push(newList);

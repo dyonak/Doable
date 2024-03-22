@@ -48,4 +48,16 @@ export class List {
       return item.id != itemId;
     });
   }
+
+  checkItemForArchivability(item) {
+    if (this.isArchive) return;
+    if (
+      item.isComplete &&
+      Date.now() - item.completedDate > this.autoArchiveDelay
+    ) {
+      return true;
+    }
+
+    return false;
+  }
 }
