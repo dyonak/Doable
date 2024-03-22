@@ -533,3 +533,8 @@ li > .detailsContainer {
 .list .detailsContainer input {
   width: 250px;
 }
+
+#listAutoArchive,
+#listDue {
+  width: 100px;
+}

@@ -39,6 +39,7 @@ export class List {
   }
 
   addItem(item) {
+    item.dueDate = Date.now() + this.defaultDue;
     this.items.push(item);
   }
 

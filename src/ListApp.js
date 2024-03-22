@@ -107,9 +107,23 @@ export class ListApp {
 
       if (data.title != this.lists.find((list) => list.id == data.id).name)
         listChanged = true;
+      if (
+        data.defaultDueTime !=
+        this.lists.find((list) => list.id == data.id).defaultDue
+      )
+        listChanged = true;
+      if (
+        data.archiveTime !=
+        this.lists.find((list) => list.id == data.id).autoArchiveDelay
+      )
+        listChanged = true;
 
       if (listChanged) {
         this.lists.find((list) => list.id == data.id).name = data.title;
+        this.lists.find((list) => list.id == data.id).defaultDue =
+          data.defaultDueTime;
+        this.lists.find((list) => list.id == data.id).autoArchiveDelay =
+          data.archiveTime;
         PubSub.publish("user_edited_list");
         PubSub.publish("lists_updated", {
           lists: this.lists,
@@ -177,6 +191,8 @@ export class ListApp {
       newList.tags = list.tags;
       newList.isActive = list.isActive;
       newList.isArchive = list.isArchive;
+      newList.defaultDue = list.defaultDue;
+      newList.autoArchiveDelay = list.autoArchiveDelay;
       if (newList.isActive) this.activeList = newList.id;
       list.items.forEach((item) => {
         let newItem = new Todo(item.title);

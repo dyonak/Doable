@@ -184,8 +184,17 @@ export class ListUi {
     detailsContainer.innerHTML = `
             <div class="detailsForm">
             <div><label for="listTitle" id="listTitleLabel">Name</label>
-            <input type="input" name="listTitle" tabindex="1" id="listTitle" value="${list.name}" /></div>
-            
+            <input type="input" name="listTitle" tabindex="1" id="listTitle" value="${
+              list.name
+            }" /></div>
+            <div><label for="listDue" id="listDueLabel">New Items Due In</label>
+            <input type="input" name="listDue" tabindex="1" id="listDue" value="${
+              list.defaultDue / 1000 / 60 / 60 / 24
+            }" />Days</div>
+            <div><label for="listAutoArchive" id="listAutoArchiveLabel">Complete Items Archive in</label>
+            <input type="input" name="listAutoArchive" tabindex="1" id="listAutoArchive" value="${
+              list.autoArchiveDelay / 1000 / 60 / 60 / 24
+            }" />Days</div>
             `;
 
     let saveButton = document.createElement("i");
@@ -549,11 +558,20 @@ export class ListUi {
     let activeListLi = document.querySelector(".active");
     let id = activeListLi.classList[1].replace("list-", "");
     let title = activeListLi.querySelector("#listTitle").value.trim();
+    let defaultDue = activeListLi.querySelector("#listDue").value.trim();
+    let autoArchive = activeListLi
+      .querySelector("#listAutoArchive")
+      .value.trim();
+
+    defaultDue = defaultDue * 24 * 60 * 60 * 1000;
+    autoArchive = autoArchive * 24 * 60 * 60 * 1000;
 
     //Publish check for changes
     PubSub.publish("list_edit_requested", {
       id: id,
       title: title,
+      defaultDueTime: defaultDue,
+      archiveTime: autoArchive,
     });
 
     activeListLi.classList.remove("editing");
