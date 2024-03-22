@@ -37,7 +37,7 @@ export class Todo {
 
   markComplete() {
     this.isComplete = true;
-    this.completedDate = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    this.completedDate = Date.now();
   }
 
   markIncomplete() {
