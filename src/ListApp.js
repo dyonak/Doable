@@ -186,12 +186,32 @@ export class ListApp {
       this.loadListsFromStorage(data);
     });
 
+    PubSub.subscribe("no_lists_in_storage", (msg, data) => this.newUserSetup());
+
     PubSub.publish("app_started");
+  }
+
+  newUserSetup() {
+    console.log("No archive list found, setting up for new user.");
+    //Create Archive
+    let archiveList = new List("Archive");
+    archiveList.isArchive = true;
+    this.lists.push(archiveList);
+
+    //Create a default list
+    let defaultList = new List("Default");
+    this.lists.push(defaultList);
+    this.activeList = defaultList.id;
+
+    //Create an initial Todo
+    let defaultTodo = new Todo("Have a look around!");
+    defaultList.addItem(defaultTodo);
+
+    this.lists.find((list) => list.id == defaultList.id).activateList();
   }
 
   loadListsFromStorage(data) {
     let retrievedLists = data.lists;
-    if (retrievedLists.length < 1) return;
 
     retrievedLists.forEach((list) => {
       let newList = new List(list.name);
@@ -219,15 +239,7 @@ export class ListApp {
       });
       this.lists.push(newList);
     });
-
-    //Now that lists are loaded check for an archive list, create one if it doesn't exist
-    if (this.lists.filter((list) => list.isArchive === true).length < 1) {
-      let archiveList = new List("Archive");
-      archiveList.isArchive = true;
-      this.lists.push(archiveList);
-    }
-
-    if (this.lists) PubSub.publish("lists_updated", { lists: this.lists });
+    PubSub.publish("lists_updated", { lists: this.lists });
   }
 
   getIdFromClass(className) {
