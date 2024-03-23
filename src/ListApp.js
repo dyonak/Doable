@@ -221,7 +221,7 @@ export class ListApp {
     });
 
     //Now that lists are loaded check for an archive list, create one if it doesn't exist
-    if (this.lists.filter((list) => list.isArchive === true) < 1) {
+    if (this.lists.filter((list) => list.isArchive === true).length < 1) {
       let archiveList = new List("Archive");
       archiveList.isArchive = true;
       this.lists.push(archiveList);
