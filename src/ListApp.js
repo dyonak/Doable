@@ -207,24 +207,24 @@ export class ListApp {
     let defaultTodo = new Todo("Have a look around!");
     defaultTodo.listId = defaultList.id;
     defaultTodo.priority = 1;
-    defaultTodo.dueDate += 5;
     defaultList.addItem(defaultTodo);
+    defaultTodo.dueDate += 5;
 
     let defaultTodo2 = new Todo(
       "Create lists and todos with the buttons OR use hotkeys [L]ist and [T]odo."
     );
     defaultTodo2.listId = defaultList.id;
     defaultTodo2.priority = 2;
-    defaultTodo2.dueDate += 10;
     defaultList.addItem(defaultTodo2);
+    defaultTodo2.dueDate += 10;
 
     let defaultTodo3 = new Todo(
       "Take a look at the List and Todo settings for more details."
     );
     defaultTodo3.listId = defaultList.id;
     defaultTodo3.priority = 3;
-    defaultTodo3.dueDate += 15;
     defaultList.addItem(defaultTodo3);
+    defaultTodo3.dueDate += 15;
 
     let defaultTodo4 = new Todo("Find a new todo tracking tool.");
     defaultTodo4.listId = defaultList.id;
