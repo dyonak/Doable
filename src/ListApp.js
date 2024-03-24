@@ -203,10 +203,32 @@ export class ListApp {
     this.lists.push(defaultList);
     this.activeList = defaultList.id;
 
-    //Create an initial Todo
+    //Create an initial Todos
     let defaultTodo = new Todo("Have a look around!");
     defaultTodo.listId = defaultList.id;
+    defaultTodo.priority = 1;
     defaultList.addItem(defaultTodo);
+
+    let defaultTodo2 = new Todo(
+      "Create lists and todos with the buttons OR use hotkeys [L]ist and [T]odo."
+    );
+    defaultTodo2.listId = defaultList.id;
+    defaultTodo2.priority = 2;
+    defaultList.addItem(defaultTodo2);
+
+    let defaultTodo3 = new Todo(
+      "Take a look at the List and Todo settings for more details."
+    );
+    defaultTodo3.listId = defaultList.id;
+    defaultTodo3.priority = 3;
+    defaultList.addItem(defaultTodo3);
+
+    let defaultTodo4 = new Todo("Find a new todo tracking tool.");
+    defaultTodo4.listId = defaultList.id;
+    defaultTodo4.priority = 4;
+    defaultTodo4.isComplete = true;
+    defaultTodo4.completedDate = Date.now();
+    defaultList.addItem(defaultTodo4);
 
     this.lists.find((list) => list.id == defaultList.id).activateList();
   }

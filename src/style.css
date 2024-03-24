@@ -310,6 +310,7 @@ main {
 
 .quickActions button:hover {
   border-bottom: 5px solid var(--fifth-color);
+  cursor: pointer;
 }
 
 .fa-trash {
@@ -319,6 +320,7 @@ main {
 .fa-square,
 .fa-square-check {
   color: var(--second-color);
+  padding-right: 1rem;
 }
 
 .fa-pen {
@@ -422,18 +424,22 @@ main {
 
 @keyframes animate-slide {
   0% {
-    transform: scale(1, 0.1);
+    transform: scale(1, 0);
+
+    transition: all 0.9s ease-out;
   }
   100% {
     transform: scale(1, 1);
-  }
-} */
 
-.itemTitle {
+    transition: all 0.9s ease-out;
+  }
+}
+
+.animate.slide .itemTitle {
   font-weight: 500;
   line-height: 125%;
   padding-left: 10px;
-}
+} */
 
 .itemsContainer:hover li {
   opacity: 0.6;
