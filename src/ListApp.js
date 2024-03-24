@@ -204,7 +204,9 @@ export class ListApp {
     this.activeList = defaultList.id;
 
     //Create an initial Todos
-    let defaultTodo = new Todo("Have a look around!");
+    let defaultTodo = new Todo(
+      "Take a look at the List and Todo settings for more details."
+    );
     defaultTodo.listId = defaultList.id;
     defaultTodo.priority = 1;
     defaultList.addItem(defaultTodo);
@@ -216,9 +218,7 @@ export class ListApp {
     defaultTodo2.priority = 2;
     defaultList.addItem(defaultTodo2);
 
-    let defaultTodo3 = new Todo(
-      "Take a look at the List and Todo settings for more details."
-    );
+    let defaultTodo3 = new Todo("Have a look around!");
     defaultTodo3.listId = defaultList.id;
     defaultTodo3.priority = 3;
     defaultList.addItem(defaultTodo3);
