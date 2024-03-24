@@ -228,8 +228,10 @@ export class ListUi {
 
     if (isArchive) {
       this.listsBase.insertBefore(li, this.addListLi);
+      this.addItemDiv.style.display = "none";
     } else {
       this.listsBase.insertBefore(li, this.listsBase.children[0]);
+      this.addItemDiv.style.display = "block";
     }
   }
 
