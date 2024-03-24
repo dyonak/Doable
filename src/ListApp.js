@@ -205,6 +205,7 @@ export class ListApp {
 
     //Create an initial Todo
     let defaultTodo = new Todo("Have a look around!");
+    defaultTodo.listId = defaultList.id;
     defaultList.addItem(defaultTodo);
 
     this.lists.find((list) => list.id == defaultList.id).activateList();

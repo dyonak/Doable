@@ -1,8 +1,5 @@
 new (class Storage {
   constructor() {
-    //This is just here for testing
-    this.listCount = 0;
-    this.itemCount = 0;
     PubSub.subscribe("lists_updated", (msg, data) => {
       this.storeLists(data.lists);
     });
@@ -17,13 +14,12 @@ new (class Storage {
 
   retrieveLists() {
     let lists = JSON.parse(localStorage.getItem("lists"));
+    //Check for no lists, new user state
     if (!lists) {
       PubSub.publish("no_lists_in_storage");
       return;
     }
-    //localStorage.clear();
+
     PubSub.publish("lists_retrieved_from_storage", { lists: lists });
-    //Object.assign(JSON.parse(localStorage.getItem(id)), new Todo());
-    //prototype must be set to re-attach the class methods, localstorage strips them
   }
 })();
