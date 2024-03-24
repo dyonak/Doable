@@ -204,11 +204,10 @@ export class ListApp {
     this.activeList = defaultList.id;
 
     //Create an initial Todos
-    let defaultTodo = new Todo(
-      "Take a look at the List and Todo settings for more details."
-    );
+    let defaultTodo = new Todo("Have a look around!");
     defaultTodo.listId = defaultList.id;
     defaultTodo.priority = 1;
+    defaultTodo.dueDate += 5;
     defaultList.addItem(defaultTodo);
 
     let defaultTodo2 = new Todo(
@@ -216,11 +215,15 @@ export class ListApp {
     );
     defaultTodo2.listId = defaultList.id;
     defaultTodo2.priority = 2;
+    defaultTodo2.dueDate += 10;
     defaultList.addItem(defaultTodo2);
 
-    let defaultTodo3 = new Todo("Have a look around!");
+    let defaultTodo3 = new Todo(
+      "Take a look at the List and Todo settings for more details."
+    );
     defaultTodo3.listId = defaultList.id;
     defaultTodo3.priority = 3;
+    defaultTodo3.dueDate += 15;
     defaultList.addItem(defaultTodo3);
 
     let defaultTodo4 = new Todo("Find a new todo tracking tool.");
